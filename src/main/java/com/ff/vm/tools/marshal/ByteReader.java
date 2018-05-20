@@ -6,6 +6,9 @@ import com.ff.vm.tools.marshal.type.Complex;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * refer to http://demoseen.com/blog/2010-02-20_Python_Marshal_Format.html
+ */
 public class ByteReader {
 
     private InputStream in;
