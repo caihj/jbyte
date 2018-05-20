@@ -89,7 +89,7 @@ public class VirtualMachine {
         Object argObj = null;
 
         if(b>=HAS_ARGUMENT){
-            short arg = (short) (f.code.co_code[f.next_instruction] + (f.code.co_code[f.next_instruction+1]<<8));
+            short arg = (short) (( 0xff & f.code.co_code[f.next_instruction]) + ((0xff & f.code.co_code[f.next_instruction+1])<<8));
             if(hasconst.contains((int)b)){
                 argObj = f.code.co_consts[arg];
             }else if(hasfree.contains(b)){

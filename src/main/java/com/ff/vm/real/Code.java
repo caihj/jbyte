@@ -5,9 +5,18 @@ package com.ff.vm.real;
  */
 public class Code {
 
+    public int argcount;
+
+    public int nlocals;
+
+    public int stacksize;
+
+    public int flags;
+
+
     //because of in java, byte means signed byte
     //so we use short to represent  byte from 0x00~0xff, and it's all positive number.
-    public short [] co_code ;
+    public byte [] co_code ;
 
     //const
     public Object []  co_consts;
@@ -20,5 +29,13 @@ public class Code {
     public Object[] co_cellvars;
 
     public Object[] co_freevars;
+
+    public String filename;
+
+    public String name;
+
+    public int firstlineno;
+
+    //lnotab;
 
 }
