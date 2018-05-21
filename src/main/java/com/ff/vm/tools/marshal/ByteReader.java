@@ -81,18 +81,22 @@ public class ByteReader {
         code.stacksize = readInt();
         code.flags = readInt();
         code.co_code = (byte[]) readObject();
-        code.co_consts = readTuple();
-        code.co_names = readTuple();
-        code.co_varnames = readTuple();
-        code.co_freevars = readTuple();
-        code.co_cellvars = readTuple();
+        code.co_consts = (Object[]) readObject();
+        code.co_names =  convertToStrArr((Object[]) readObject());
+        code.co_varnames = (String[]) readObject();
+        code.co_freevars = (Object[]) readObject();
+        code.co_cellvars = (Object[]) readObject();
         code.filename = (String) readObject();
 
         return code;
     }
 
-    public String []  convertToStrArr(){
-
+    public String []  convertToStrArr(Object[] arr){
+        String [] str= new String[arr.length];
+        for(int i=0;i<arr.length;i++){
+            str[i] = (String) arr[i];
+        }
+        return str;
     }
 
     private Object readDict() {
