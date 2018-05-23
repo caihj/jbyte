@@ -1,3 +1,4 @@
+import com.ff.vm.real.Code;
 import com.ff.vm.tools.PycReader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +32,9 @@ public class TestByte {
         PycReader reader = new PycReader();
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource("basic.pyc").getPath());
-        reader.readFile(file.getPath());
+        Code code = reader.readFile(file.getPath());
+        System.out.println(code);
     }
+
+
 }

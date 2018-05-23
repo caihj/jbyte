@@ -5,6 +5,7 @@ import com.ff.vm.tools.marshal.type.Complex;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 /**
  * refer to http://demoseen.com/blog/2010-02-20_Python_Marshal_Format.html
@@ -13,8 +14,22 @@ public class ByteReader {
 
     private InputStream in;
 
+    private int pos = 0;
+
     public ByteReader(InputStream in){
-        this.in = in;
+        this.in = new InputStream() {
+            @Override
+            public int read() throws IOException {
+                pos++;
+                return in.read();
+            }
+
+            @Override
+            public int read(byte arr[]) throws IOException {
+                pos +=arr.length;
+                return in.read(arr);
+            }
+        };
     }
     public int readInt() throws IOException {
         byte arr[] = new byte[4];
@@ -59,8 +74,8 @@ public class ByteReader {
             case 'g':return readFloat();
             case 'x':return readComplex();
             case 'l':return readLong();
-            case 's': return readStr();
-            case 't':return  readStr();
+            case 's':return readStr();
+            case 't':return readStr();
             case 'R':return readInt();
             case 'u':return readUtf8Str();
             case '(':return readTuple();
@@ -69,9 +84,11 @@ public class ByteReader {
             case '>':return readTuple();
 
             case 'c':return readCode();
+            default:
+                System.out.println(pos);
+                throw new RuntimeException("bad type " + Character.toString((char) typeFlag) );
         }
 
-        return null;
     }
 
     private Code readCode() throws IOException {
@@ -83,10 +100,10 @@ public class ByteReader {
         code.co_code = (byte[]) readObject();
         code.co_consts = (Object[]) readObject();
         code.co_names =  convertToStrArr((Object[]) readObject());
-        code.co_varnames = (String[]) readObject();
+        code.co_varnames = convertToStrArr((Object[]) readObject());
         code.co_freevars = (Object[]) readObject();
         code.co_cellvars = (Object[]) readObject();
-        code.filename = (String) readObject();
+        code.filename = new String((byte[]) readObject(),"utf-8");
 
         return code;
     }
@@ -94,7 +111,11 @@ public class ByteReader {
     public String []  convertToStrArr(Object[] arr){
         String [] str= new String[arr.length];
         for(int i=0;i<arr.length;i++){
-            str[i] = (String) arr[i];
+            try {
+                str[i] = new String((byte[]) arr[i],"utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
         }
         return str;
     }

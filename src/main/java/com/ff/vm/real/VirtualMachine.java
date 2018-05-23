@@ -12,6 +12,7 @@ import static com.ff.vm.real.VirtualMachineStatic.*;
 
 /**
  * Created by caihaijun@navercorp.com on 2018/5/18.
+ * https://docs.python.org/2/library/dis.html
  */
 public class VirtualMachine {
 
@@ -197,6 +198,22 @@ public class VirtualMachine {
         frame.stack.push(obj);
     }
 
+
+    private void OP_BINARY_ADD(){
+        Object obj0 = frame.stack.pop();
+        Object obj1 = frame.stack.pop();
+        //the implement is wrong ,just support int
+        Object obj3 = Long.valueOf(String.valueOf(obj1)) + Long.valueOf(String.valueOf(obj0));
+        frame.stack.push(obj3);
+    }
+
+    private void OP_BINARY_SUBTRACT(){
+        Object obj0 = frame.stack.pop();
+        Object obj1 = frame.stack.pop();
+        //the implement is wrong ,just support int
+        Object obj3 = Long.valueOf(String.valueOf(obj1)) - Long.valueOf(String.valueOf(obj0));
+        frame.stack.push(obj3);
+    }
 
 
 

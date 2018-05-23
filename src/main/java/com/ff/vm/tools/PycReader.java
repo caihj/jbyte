@@ -1,6 +1,7 @@
 package com.ff.vm.tools;
 
 import com.ff.vm.real.Code;
+import com.ff.vm.tools.marshal.ByteReader;
 import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,7 +27,8 @@ public class PycReader {
         inputStream.read(timeStamp);
         log.info(new Date(fourByteToLong(timeStamp)*1000).toString());
 
-
+        ByteReader reader = new ByteReader(inputStream);
+        code = (Code) reader.readObject();
 
         return code;
     }

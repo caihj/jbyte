@@ -1,9 +1,13 @@
 import com.ff.vm.real.Code;
 import com.ff.vm.real.VirtualMachine;
 import com.ff.vm.real.VirtualMachineStatic;
+import com.ff.vm.tools.PycReader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by caihaijun@navercorp.com on 2018/5/18.
@@ -35,9 +39,14 @@ public class testRealOne {
     }
 
     @Test
-    public void testByte(){
+    public void testByte() throws IOException {
+        PycReader reader = new PycReader();
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(classLoader.getResource("basic.pyc").getPath());
+        Code code = reader.readFile(file.getPath());
+        System.out.println(code);
 
-        byte b = 50;
-        System.out.println((int)b<<2);
+        VirtualMachine vm = new VirtualMachine();
+        vm.run_code(code);
     }
 }
