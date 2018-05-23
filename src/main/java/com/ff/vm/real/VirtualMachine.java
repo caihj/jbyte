@@ -32,7 +32,7 @@ public class VirtualMachine {
     static {
         for(Method m:VirtualMachine.class.getDeclaredMethods()){
             if(m.getName().startsWith("OP_")){
-                opMethodMap.put(m.getName().replace("OP_",""),m);
+                opMethodMap.put(m.getName().substring(3),m);
             }
         }
 
@@ -130,7 +130,7 @@ public class VirtualMachine {
 
         Method m = fastArray[op.getValue2()];
         if(m==null){
-            throw new RuntimeException("unsupported instruct："+opCode);
+            throw new RuntimeException("unsupported instruct："+opCode+" "+op.getValue2());
         }
         try {
             if(arg!=null)
@@ -215,6 +215,12 @@ public class VirtualMachine {
         frame.stack.push(obj3);
     }
 
+    private void OP_POP_JUMP_IF_FALSE(Integer count){
+        boolean top = (boolean) frame.stack.pop();
+        if(!top){
+            frame.next_instruction = count;
+        }
+    }
 
 
 }

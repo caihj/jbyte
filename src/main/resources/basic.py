@@ -2,4 +2,5 @@
 x=1
 y=2
 c=3
-print(x+y+c-5)
+if True:
+    print(x+y+c-5)
