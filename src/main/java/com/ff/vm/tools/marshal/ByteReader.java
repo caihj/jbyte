@@ -1,7 +1,9 @@
 package com.ff.vm.tools.marshal;
 
 import com.ff.vm.real.Code;
-import com.ff.vm.tools.marshal.type.Complex;
+import com.ff.vm.real.type.PyObject;
+import com.ff.vm.real.type.basic.*;
+import com.ff.vm.real.type.constant.BasicConstant;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,10 +33,11 @@ public class ByteReader {
             }
         };
     }
-    public int readInt() throws IOException {
+    public PyInt readInt() throws IOException {
         byte arr[] = new byte[4];
         in.read(arr);
-        return  (arr[0] & 0xff) + ((0xff & arr[1])<<8) + ((0xff & arr[2])<<16) + ((0xff & arr[3])<<24);
+        long  value = (arr[0] & 0xff) + ((0xff & arr[1])<<8) + ((0xff & arr[2])<<16) + ((0xff & arr[3])<<24);
+        return new PyInt(value);
     }
 
     /**
@@ -42,32 +45,32 @@ public class ByteReader {
      * @return
      * @throws IOException
      */
-    public byte[] readStr() throws IOException {
-        int len = readInt();
-        byte []  arr = new byte[len];
+    public PyStr readStr() throws IOException {
+        PyInt len = readInt();
+        byte []  arr = new byte[(int) len.value];
         in.read(arr);
-        return arr;
+        return new PyStr(arr);
     }
 
-    public Object[] readTuple() throws IOException {
-        int len = readInt();
-        Object [] tuple = new Object[len];
+    public PyTuple readTuple() throws IOException {
+        PyInt len = readInt();
+        PyObject[] tuple = new PyObject[(int) len.value];
 
-        for(int i=0;i<len;i++){
+        for(int i=0;i<len.value;i++){
             tuple[i] = readObject();
         }
-        return tuple;
+        return  new PyTuple(tuple);
     }
 
-    public Object readObject() throws IOException {
+    public PyObject readObject() throws IOException {
         int typeFlag = in.read();
         switch (typeFlag){
-            case '0':return Constants.TYPE_NULL;
-            case 'N':return Constants.TYPE_NONE;
-            case 'F':return Constants.TYPE_FALSE;
-            case 'T':return Constants.TYPE_TRUE;
-            case 'S':return Constants.TYPE_STOPITER;
-            case '.':return Constants.TYPE_ELLIPSIS;
+            case '0':return BasicConstant.TYPE_NULL;
+            case 'N':return BasicConstant.TYPE_NONE;
+            case 'F':return BasicConstant.TYPE_FALSE;
+            case 'T':return BasicConstant.TYPE_TRUE;
+            case 'S':return BasicConstant.TYPE_STOPITER;
+            case '.':return BasicConstant.TYPE_ELLIPSIS;
             case 'i':return readInt();
             case 'I':return readLong();
             case 'f':return readFloatStr();
@@ -97,13 +100,13 @@ public class ByteReader {
         code.nlocals = readInt();
         code.stacksize = readInt();
         code.flags = readInt();
-        code.co_code = (byte[]) readObject();
-        code.co_consts = (Object[]) readObject();
-        code.co_names =  convertToStrArr((Object[]) readObject());
-        code.co_varnames = convertToStrArr((Object[]) readObject());
-        code.co_freevars = (Object[]) readObject();
-        code.co_cellvars = (Object[]) readObject();
-        code.filename = new String((byte[]) readObject(),"utf-8");
+        code.co_code = (PyStr) readObject();
+        code.co_consts = (PyTuple) readObject();
+        code.co_names = (PyTuple) readObject();
+        code.co_varnames = (PyTuple) readObject();
+        code.co_freevars = (PyTuple) readObject();
+        code.co_cellvars = (PyTuple) readObject();
+        code.filename = (PyStr) readObject();
 
         return code;
     }
@@ -120,44 +123,41 @@ public class ByteReader {
         return str;
     }
 
-    private Object readDict() {
+    private PyDict readDict() {
         return null;
     }
 
-    private Object readList() throws IOException {
-        int len = readInt();
-        Object [] arr = new Object[len];
-        for(int i=0;i<len;i++){
+    private PyList readList() throws IOException {
+        PyInt len = readInt();
+        PyObject [] arr = new PyObject[(int) len.value];
+        for(int i=0;i<len.value;i++){
             arr[i] = readObject();
         }
-        return arr;
+        return new PyList(arr);
     }
 
-    private String readUtf8Str() throws IOException {
-
-        byte [] arr = readStr();
-        return new String(arr,"utf-8");
+    private PyStr readUtf8Str() throws IOException {
+        return  readStr();
     }
 
-    private Complex readComplex() throws IOException {
-        Complex complex = new Complex();
+    private PyComplex readComplex() throws IOException {
+        PyComplex complex = new PyComplex();
 
-        complex.real = readFloatStr();
-        complex.image = readFloatStr();
+        complex.real = Double.valueOf(new String(readFloatStr().value));
+        complex.image =  Double.valueOf(new String(readFloatStr().value));
         return complex;
     }
 
-    private double readFloat() throws IOException {
-        double d = Double.longBitsToDouble(readLong());
-        return d;
+    private PyFloat readFloat() throws IOException {
+        double d = Double.longBitsToDouble(readLong().value);
+        return new PyFloat(d);
     }
 
-    private String readFloatStr() throws IOException {
-        String floatStr = new String(readStr());
-        return floatStr;
+    private PyStr readFloatStr() throws IOException {
+        return readStr();
     }
 
-    private long readLong() throws IOException {
+    private PyInt readLong() throws IOException {
         byte [] arr = new byte[8];
         in.read(arr);
         long ret=0;
@@ -165,10 +165,7 @@ public class ByteReader {
         for(int i=0;i<8;i++){
             ret += (0xff & arr[i]) <<(8*i);
         }
-        return ret;
+        return new PyInt(ret);
 
     }
-
-
-
 }

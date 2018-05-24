@@ -16,7 +16,7 @@ public class PycReader {
 
     public Code readFile(String fileName) throws IOException {
 
-        Code code = new Code();
+        Code code = null;
 
         FileInputStream inputStream =  new FileInputStream(fileName);
 

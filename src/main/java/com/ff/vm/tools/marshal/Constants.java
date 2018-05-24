@@ -6,5 +6,6 @@ public enum  Constants {
     TYPE_FALSE,
     TYPE_TRUE,
     TYPE_STOPITER,
+    TYPE_NOT_IMPLEMENT,
     TYPE_ELLIPSIS
 }

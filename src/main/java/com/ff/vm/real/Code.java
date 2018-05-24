@@ -1,40 +1,51 @@
 package com.ff.vm.real;
 
+import com.ff.vm.real.type.PyObject;
+import com.ff.vm.real.type.basic.PyInt;
+import com.ff.vm.real.type.basic.PyList;
+import com.ff.vm.real.type.basic.PyStr;
+import com.ff.vm.real.type.basic.PyTuple;
+
 /**
  * Created by caihaijun@navercorp.com on 2018/5/18.
  */
-public class Code {
+public class Code extends PyObject{
 
-    public int argcount;
+    public PyInt argcount;
 
-    public int nlocals;
+    public PyInt nlocals;
 
-    public int stacksize;
+    public PyInt stacksize;
 
-    public int flags;
+    public PyInt flags;
 
 
     //because of in java, byte means signed byte
     //so we use short to represent  byte from 0x00~0xff, and it's all positive number.
-    public byte [] co_code ;
+    public PyStr co_code ;
 
     //const
-    public Object []  co_consts;
+    public PyTuple co_consts;
 
     //names
-    public String [] co_names;
+    public PyTuple co_names;
 
-    public String[] co_varnames;
+    public PyTuple co_varnames;
 
-    public Object[] co_cellvars;
+    public PyTuple co_cellvars;
 
-    public Object[] co_freevars;
+    public PyTuple co_freevars;
 
-    public String filename;
+    public PyStr filename;
 
-    public String name;
+    public PyStr name;
 
-    public int firstlineno;
+    public PyInt firstlineno;
+
+    @Override
+    public String type() {
+        return "Object Code";
+    }
 
     //lnotab;
 
