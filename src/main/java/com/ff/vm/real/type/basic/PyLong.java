@@ -5,7 +5,7 @@ import com.ff.vm.real.type.PyObject;
 import java.math.BigDecimal;
 
 /**
- * Created by caihaijun@navercorp.com on 2018/5/24.
+ * Created by chjun1991@163.com on 2018/5/24.
  */
 public class PyLong extends PyObject {
 

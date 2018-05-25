@@ -5,7 +5,7 @@ import org.javatuples.Pair;
 import java.util.List;
 
 /**
- * Created by caihaijun@navercorp.com on 2018/5/18.
+ * Created by chjun1991@163.com on 2018/5/18.
  */
 public class Code {
 

@@ -3,7 +3,7 @@ package com.ff.vm.real.type;
 import com.ff.vm.real.type.basic.PyStr;
 
 /**
- * Created by caihaijun@navercorp.com on 2018/5/24.
+ * Created by chjun1991@163.com on 2018/5/24.
  * root class for a python object
  */
 public abstract class PyObject {

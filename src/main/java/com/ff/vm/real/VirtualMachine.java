@@ -14,7 +14,7 @@ import java.util.*;
 import static com.ff.vm.real.VirtualMachineStatic.*;
 
 /**
- * Created by caihaijun@navercorp.com on 2018/5/18.
+ * Created by chjun1991@163.com on 2018/5/18.
  * https://docs.python.org/2/library/dis.html
  */
 

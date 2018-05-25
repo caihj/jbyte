@@ -4,7 +4,7 @@ import com.ff.vm.real.type.PyObject;
 import com.ff.vm.tools.marshal.Constants;
 
 /**
- * Created by caihaijun@navercorp.com on 2018/5/25.
+ * Created by chjun1991@163.com on 2018/5/25.
  */
 public class PyIterator extends PyObject {
 

@@ -5,7 +5,7 @@ import com.ff.vm.real.type.basic.PyBool;
 import com.ff.vm.real.type.basic.PyInt;
 
 /**
- * Created by caihaijun@navercorp.com on 2018/5/25.
+ * Created by chjun1991@163.com on 2018/5/25.
  */
 public class CompareOperator {
 

@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by caihaijun@navercorp.com on 2018/5/25.
+ * Created by chjun1991@163.com on 2018/5/25.
  * https://docs.python.org/2/tutorial/datastructures.html#sets
  */
 public class PySet extends PyObject {
