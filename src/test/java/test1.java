@@ -8,7 +8,7 @@ import org.junit.runners.JUnit4;
 import java.util.Arrays;
 
 /**
- * Created by caihaijun@navercorp.com on 2018/5/18.
+ * Created by chjun1991@163.com on 2018/5/18.
  */
 
 @RunWith(JUnit4.class)

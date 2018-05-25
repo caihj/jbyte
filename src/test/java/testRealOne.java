@@ -17,7 +17,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Created by caihaijun@navercorp.com on 2018/5/18.
+ * Created by chjun1991@163.com on 2018/5/18.
  */
 
 @RunWith(JUnit4.class)

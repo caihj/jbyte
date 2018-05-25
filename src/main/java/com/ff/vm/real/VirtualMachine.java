@@ -636,18 +636,29 @@ public class VirtualMachine {
 
     //Terminates a loop due to a break statement.
     public void OP_BREAK_LOOP(){
+        Block block = frame.blocks.peek();
+        frame.next_instruction = block.toAddress;
     }
 
     //Continues a loop due to a continue statement. target is the address to jump to (which should be a FOR_ITER instruction).
-    public void OP_CONTINUE_LOOP(PyObject target){
+    public void OP_CONTINUE_LOOP(PyInt target){
+        frame.next_instruction = (int) target.value;
     }
 
-    //Calls list.append(TOS[-i], TOS). Used to implement list comprehensions. While the appended value is popped off, the list object remains on the stack so that it is available for further iterations of the loop.
-    public void OP_LIST_APPEND(PyObject i){
+    //Calls list.append(TOS[-i], TOS). Used to implement list comprehensions.
+    // While the appended value is popped off,
+    // the list object remains on the stack so that it is available for further iterations of the loop.
+    public void OP_LIST_APPEND(PyInt i){
+        PyObject val = frame.stack.pop();
+        PyList list = (PyList) frame.stack.get((int) (frame.stack.size()-i.value));
+        list.append(val);
     }
 
-    //Pushes a reference to the locals of the current scope on the stack. This is used in the code for a class definition: After the class body is evaluated, the locals are passed to the class definition.
+    //Pushes a reference to the locals of the current scope on the stack.
+    // This is used in the code for a class definition: After the class body is evaluated,
+    // the locals are passed to the class definition.
     public void OP_LOAD_LOCALS(){
+        frame.stack.push(new PyDict(frame.local_names));
     }
 
     //Returns with TOS to the caller of the function.
@@ -658,11 +669,17 @@ public class VirtualMachine {
     }
 
     //Pops TOS and yields it from a generator.
-    public void OP_YIELD_VALUE(){
+    public Object OP_YIELD_VALUE(){
+        PyObject obj = frame.stack.pop();
+        return_value = obj;
+        return Why.YIELD;
     }
 
-    //Loads all symbols not starting with '_' directly from the module TOS to the local namespace. The module is popped after loading all names. This opcode implements from module import *.
+    //Loads all symbols not starting with '_' directly from the module TOS to the local namespace.
+    // The module is popped after loading all names. This opcode implements from module import *.
     public void OP_IMPORT_STAR(){
+        PyObject mod = frame.stack.pop();
+
     }
 
     //Implements exec TOS2,TOS1,TOS. The compiler fills missing optional parameters with None.
@@ -671,10 +688,12 @@ public class VirtualMachine {
 
     //Removes one block from the block stack. Per frame, there is a stack of blocks, denoting nested loops, try statements, and such.
     public void OP_POP_BLOCK(){
+        frame.blocks.pop();
     }
 
     //Terminates a finally clause. The interpreter recalls whether the exception has to be re-raised, or whether the function returns, and continues with the outer-next block.
     public void OP_END_FINALLY(){
+
     }
 
     //Creates a new class object. TOS is the methods dictionary, TOS1 the tuple of the names of the base classes, and TOS2 the class name.
@@ -887,15 +906,28 @@ public class VirtualMachine {
     }
 
     //Pushes a block for a loop onto the block stack. The block spans from the current instruction with a size of delta bytes.
-    public void OP_SETUP_LOOP(PyObject delta){
+    public void OP_SETUP_LOOP(PyInt delta){
+        Block block = new Block();
+        block.toAddress = (int) delta.value;
+        block.type = Block.Type.LOOP;
+        frame.blocks.push(block);
+
     }
 
     //Pushes a try block from a try-except clause onto the block stack. delta points to the first except block.
-    public void OP_SETUP_EXCEPT(PyObject delta){
+    public void OP_SETUP_EXCEPT(PyInt delta){
+        Block block = new Block();
+        block.toAddress = (int) delta.value;
+        block.type = Block.Type.TRY;
+        frame.blocks.push(block);
     }
 
     //Pushes a try block from a try-except clause onto the block stack. delta points to the finally block.
-    public void OP_SETUP_FINALLY(PyObject delta){
+    public void OP_SETUP_FINALLY(PyInt delta){
+        Block block = new Block();
+        block.toAddress = (int) delta.value;
+        block.type = Block.Type.TRY;
+        frame.blocks.push(block);
     }
 
     //Store a key and value pair in a dictionary. Pops the key and value while leaving the dictionary on the stack.

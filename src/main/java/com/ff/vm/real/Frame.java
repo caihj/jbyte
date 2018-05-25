@@ -22,7 +22,13 @@ public class Frame {
 
      Stack<PyObject> stack = new Stack();
 
+     Stack<Block> blocks = new Stack<>();
+
      int next_instruction = 0;
+
+     PyObject lastException = null;
+
+     PyObject returnValue = null;
 
     public Frame(Code code,Map<PyStr,PyObject> global_names, Map<PyStr,PyObject> local_names,Frame prev_frame){
         this.code = code;

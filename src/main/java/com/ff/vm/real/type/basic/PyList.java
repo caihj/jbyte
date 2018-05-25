@@ -20,4 +20,7 @@ public class PyList extends PyObject {
     public String type() {
         return "list";
     }
+
+    public void append(PyObject val) {
+    }
 }
