@@ -55,4 +55,100 @@ public abstract class PyObject {
 
     public PyObject __pow__(PyObject obj0) {throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
     }
+
+    public PyObject __slice0__() {throw new RuntimeException("not supported type "+ this.type());
+    }
+
+    public PyObject __slice1__(PyObject begin) {throw new RuntimeException("not supported type "+ this.type() + " "+begin.type());
+    }
+
+
+    public PyObject __slice2__(PyObject end) {throw new RuntimeException("not supported type "+ this.type() + " "+end.type());
+    }
+
+    public PyObject __slice3__(PyObject begin,PyObject end) {
+        throw new RuntimeException("not supported type "+ this.type() + " ["+begin.type() +":"+ end.type());
+    }
+
+    public PyObject __ior__(PyObject obj0) {throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public PyObject __ixor__(PyObject obj0) {throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public PyObject __iand__(PyObject obj0) {throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public PyObject __irshift__(PyObject obj0) {throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public PyObject __ilshift__(PyObject obj0) {throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public PyObject __isub__(PyObject obj0) {throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public PyObject __iadd__(PyObject obj0) {throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public PyObject __imod__(PyObject obj0) {throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public PyObject __itruediv__(PyObject obj0) {throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public PyObject __ifloordiv__(PyObject obj0) {throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public PyObject __idiv__(PyObject obj0) {throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public PyObject __imul__(PyObject obj0) {throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public PyObject __ipow__(PyObject obj0) {throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public PyObject __store_slice1__(PyObject obj0, PyObject obj2) {throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public PyObject __store_slice3__(PyObject obj1, PyObject obj0, PyObject obj3) {
+        throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public PyObject __store_slice2__(PyObject obj0, PyObject obj2) {throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public void __delslice__() {
+    }
+
+    public void __delslice1__(PyObject obj0) {
+    }
+
+    public void __delslice2__(PyObject obj0) {
+    }
+
+    public void __delslice3__(PyObject obj1, PyObject obj0) {
+    }
+
+    public void __storesubscr__(PyObject obj0, PyObject obj2) {
+    }
+
+    public void __delsubscr__(PyObject obj0) {
+    }
+
+    public void __print__(PyObject item){
+
+    }
+
+   
+    public void __store_attr__(PyStr name, PyObject obj1) {
+    }
+
+    public void __del_attr__(PyStr name, PyObject obj1) {
+    }
+
+    public PyObject __attr__(PyStr name) {
+        return null;
+    }
 }

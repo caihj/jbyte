@@ -11,6 +11,14 @@ public class PyDict extends PyObject {
 
     public LinkedHashMap<PyObject,PyObject> value;
 
+    public PyDict(PyInt capacity){
+        value = new LinkedHashMap((int)capacity.value);
+    }
+
+    public PyDict(){
+        value = new LinkedHashMap<>();
+    }
+
     @Override
     public String type() {
         return "dict";

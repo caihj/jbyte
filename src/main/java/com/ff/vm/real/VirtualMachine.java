@@ -1,13 +1,10 @@
 package com.ff.vm.real;
 
-import com.ff.vm.real.Code;
 import com.ff.vm.real.type.PyObject;
-import com.ff.vm.real.type.basic.PyBool;
-import com.ff.vm.real.type.basic.PyInt;
-import com.ff.vm.real.type.basic.PyStr;
+import com.ff.vm.real.type.basic.*;
 import com.ff.vm.real.type.constant.BasicConstant;
-import com.ff.vm.tools.marshal.Constants;
-import org.javatuples.Pair;
+import com.ff.vm.real.util.BuiltIn;
+import com.ff.vm.real.util.CompareOperator;
 import org.javatuples.Triplet;
 
 import java.lang.reflect.InvocationTargetException;
@@ -20,6 +17,7 @@ import static com.ff.vm.real.VirtualMachineStatic.*;
  * Created by caihaijun@navercorp.com on 2018/5/18.
  * https://docs.python.org/2/library/dis.html
  */
+
 public class VirtualMachine {
 
 
@@ -37,6 +35,9 @@ public class VirtualMachine {
 
 
     private static Map<PyStr,PyObject> builtInConstants = new HashMap<>();
+
+    //wheather interactive mode
+    private boolean isInInteractiveMode = false;
 
     static {
         //https://docs.python.org/2.7/library/constants.html
@@ -363,120 +364,247 @@ public class VirtualMachine {
         PyObject obj0 = frame.stack.pop();
         PyObject obj1 = frame.stack.pop();
         //the implement is wrong ,just support int
-        PyObject obj3 =obj1.__pow__(obj0);
+        PyObject obj3 =obj1.__ipow__(obj0);
         frame.stack.push(obj3);
     }
 
     //Implements in-place TOS = TOS1 * TOS.
     public void OP_INPLACE_MULTIPLY(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        //the implement is wrong ,just support int
+        PyObject obj3 =obj1.__imul__(obj0);
+        frame.stack.push(obj3);
     }
 
     //Implements in-place TOS = TOS1 / TOS when from __future__ import division is not in effect.
     public void OP_INPLACE_DIVIDE(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        //the implement is wrong ,just support int
+        PyObject obj3 =obj1.__idiv__(obj0);
+        frame.stack.push(obj3);
     }
 
     //Implements in-place TOS = TOS1 // TOS.
     public void OP_INPLACE_FLOOR_DIVIDE(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        //the implement is wrong ,just support int
+        PyObject obj3 =obj1.__ifloordiv__(obj0);
+        frame.stack.push(obj3);
     }
 
     //Implements in-place TOS = TOS1 / TOS when from __future__ import division is in effect.
     public void OP_INPLACE_TRUE_DIVIDE(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        //the implement is wrong ,just support int
+        PyObject obj3 =obj1.__itruediv__(obj0);
+        frame.stack.push(obj3);
     }
 
     //Implements in-place TOS = TOS1 % TOS.
     public void OP_INPLACE_MODULO(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        //the implement is wrong ,just support int
+        PyObject obj3 =obj1.__imod__(obj0);
+        frame.stack.push(obj3);
     }
 
     //Implements in-place TOS = TOS1 + TOS.
     public void OP_INPLACE_ADD(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        //the implement is wrong ,just support int
+        PyObject obj3 =obj1.__iadd__(obj0);
+        frame.stack.push(obj3);
     }
 
     //Implements in-place TOS = TOS1 - TOS.
     public void OP_INPLACE_SUBTRACT(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        //the implement is wrong ,just support int
+        PyObject obj3 =obj1.__isub__(obj0);
+        frame.stack.push(obj3);
     }
 
     //Implements in-place TOS = TOS1 << TOS.
     public void OP_INPLACE_LSHIFT(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        //the implement is wrong ,just support int
+        PyObject obj3 =obj1.__ilshift__(obj0);
+        frame.stack.push(obj3);
     }
 
     //Implements in-place TOS = TOS1 >> TOS.
     public void OP_INPLACE_RSHIFT(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        //the implement is wrong ,just support int
+        PyObject obj3 =obj1.__irshift__(obj0);
+        frame.stack.push(obj3);
     }
 
     //Implements in-place TOS = TOS1 & TOS.
     public void OP_INPLACE_AND(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        //the implement is wrong ,just support int
+        PyObject obj3 =obj1.__iand__(obj0);
+        frame.stack.push(obj3);
     }
 
     //Implements in-place TOS = TOS1 ^ TOS.
     public void OP_INPLACE_XOR(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        //the implement is wrong ,just support int
+        PyObject obj3 =obj1.__ixor__(obj0);
+        frame.stack.push(obj3);
     }
 
     //Implements in-place TOS = TOS1 | TOS.
     public void OP_INPLACE_OR(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        //the implement is wrong ,just support int
+        PyObject obj3 =obj1.__ior__(obj0);
+        frame.stack.push(obj3);
     }
 
     //The slice opcodes take up to three parameters.
 
     //Implements TOS = TOS[:].
     public void OP_SLICE_0(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        //the implement is wrong ,just support int
+        PyObject obj3 =obj1.__slice0__();
+        frame.stack.push(obj3);
     }
 
     //Implements TOS = TOS1[TOS:].
     public void OP_SLICE_1(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        //the implement is wrong ,just support int
+        PyObject obj3 =obj1.__slice1__(obj0);
+        frame.stack.push(obj3);
     }
 
     //Implements TOS = TOS1[:TOS].
     public void OP_SLICE_2(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        //the implement is wrong ,just support int
+        PyObject obj3 =obj1.__slice2__(obj0);
+        frame.stack.push(obj3);
     }
 
     //Implements TOS = TOS2[TOS1:TOS].
     public void OP_SLICE_3(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        PyObject obj2 = frame.stack.pop();
+        //the implement is wrong ,just support int
+        PyObject obj3 =obj2.__slice3__(obj1,obj0);
+        frame.stack.push(obj3);
     }
 
     //Slice assignment needs even an additional parameter. As any statement, they put nothing on the stack.
 
     //Implements TOS[:] = TOS1.
     public void OP_STORE_SLICE_0(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        frame.stack.push(obj1);
     }
 
     //Implements TOS1[TOS:] = TOS2.
     public void OP_STORE_SLICE_1(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        PyObject obj2 = frame.stack.pop();
+        PyObject obj3 =obj1.__store_slice1__(obj0,obj2);
+        frame.stack.push(obj1);
     }
 
     //Implements TOS1[:TOS] = TOS2.
     public void OP_STORE_SLICE_2(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        PyObject obj2 = frame.stack.pop();
+        PyObject obj3 =obj1.__store_slice2__(obj0,obj2);
+        frame.stack.push(obj1);
     }
 
     //Implements TOS2[TOS1:TOS] = TOS3.
     public void OP_STORE_SLICE_3(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        PyObject obj2 = frame.stack.pop();
+        PyObject obj3 = frame.stack.pop();
+        PyObject obj4 =obj2.__store_slice3__(obj1,obj0,obj3);
+        frame.stack.push(obj4);
     }
 
     //Implements del TOS[:].
     public void OP_DELETE_SLICE_0(){
+        PyObject obj0 = frame.stack.pop();
+        obj0.__delslice__();
+        frame.stack.push(obj0);
     }
 
     //Implements del TOS1[TOS:].
     public void OP_DELETE_SLICE_1(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        obj1.__delslice1__(obj0);
+        frame.stack.push(obj1);
     }
 
     //Implements del TOS1[:TOS].
     public void OP_DELETE_SLICE_2(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        obj1.__delslice2__(obj0);
+        frame.stack.push(obj1);
     }
 
     //Implements del TOS2[TOS1:TOS].
     public void OP_DELETE_SLICE_3(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        PyObject obj2 = frame.stack.pop();
+        obj2.__delslice3__(obj1,obj0);
+        frame.stack.push(obj1);
     }
 
     //Implements TOS1[TOS] = TOS2.
     public void OP_STORE_SUBSCR(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        PyObject obj2 = frame.stack.pop();
+        obj1.__storesubscr__(obj2,obj0);
     }
 
     //Implements del TOS1[TOS].
     public void OP_DELETE_SUBSCR(){
+        PyObject obj0 = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        obj1.__delsubscr__(obj0);
+        frame.stack.push(obj1);
     }
 
     //Implements the expression statement for the interactive mode. TOS is removed from the stack and printed. In non-interactive mode, an expression statement is terminated with POP_TOP.
     public void OP_PRINT_EXPR(){
+        PyObject obj0 = frame.stack.pop();
+        if(isInInteractiveMode)
+            System.out.print(new String(obj0.__str__().value));
     }
 
 
@@ -487,6 +615,12 @@ public class VirtualMachine {
 
     //Like PRINT_ITEM, but prints the item second from TOS to the file-like object at TOS. This is used by the extended print statement.
     public void OP_PRINT_ITEM_TO(){
+        PyObject to = frame.stack.pop();
+        PyObject item = frame.stack.pop();
+        to.__print__(item);
+        //print item to
+        //not implement
+
     }
 
     private void OP_PRINT_NEWLINE(){
@@ -496,6 +630,8 @@ public class VirtualMachine {
 
     //Like PRINT_NEWLINE, but prints the new line on the file-like object on the TOS. This is used by the extended print statement.
     public void OP_PRINT_NEWLINE_TO(){
+        PyObject to = frame.stack.pop();
+        to.__print__(new PyStr(""));
     }
 
     //Terminates a loop due to a break statement.
@@ -560,9 +696,9 @@ public class VirtualMachine {
         frame.local_names.put(name,obj);
     }
 
-
     //Implements del name, where namei is the index into co_names attribute of the code object.
-    public void OP_DELETE_NAME(PyObject namei){
+    public void OP_DELETE_NAME(PyObject name){
+
     }
 
     //Unpacks TOS into count individual values, which are put onto the stack right-to-left.
@@ -574,24 +710,34 @@ public class VirtualMachine {
     }
 
     //Implements TOS.name = TOS1, where namei is the index of name in co_names.
-    public void OP_STORE_ATTR(PyObject namei){
+    public void OP_STORE_ATTR(PyStr name){
+        PyObject tos = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        tos.__store_attr__(name,obj1);
+
     }
 
     //Implements del TOS.name, using namei as index into co_names.
-    public void OP_DELETE_ATTR(PyObject namei){
+    public void OP_DELETE_ATTR(PyStr name){
+        PyObject tos = frame.stack.pop();
+        PyObject obj1 = frame.stack.pop();
+        tos.__del_attr__(name,obj1);
     }
 
     //Works as STORE_NAME, but stores the name as a global.
-    public void OP_STORE_GLOBAL(PyObject namei){
+    public void OP_STORE_GLOBAL(PyStr name){
+        PyObject obj = frame.stack.pop();
+        frame.global_names.put(name,obj);
     }
 
     //Works as DELETE_NAME, but deletes a global name.
-    public void OP_DELETE_GLOBAL(PyObject namei){
+    public void OP_DELETE_GLOBAL(PyObject name){
+        frame.global_names.remove(name);
     }
 
     //Pushes co_consts[consti] onto the stack.
-    public void OP_LOAD_CONST(PyObject consti){
-        frame.stack.push(consti);
+    public void OP_LOAD_CONST(PyObject constObj){
+        frame.stack.push(constObj);
     }
 
     //Pushes the value associated with co_names[namei] onto the stack.
@@ -601,37 +747,79 @@ public class VirtualMachine {
     }
 
     //Creates a tuple consuming count items from the stack, and pushes the resulting tuple onto the stack.
-    public void OP_BUILD_TUPLE(PyObject count){
+    public void OP_BUILD_TUPLE(PyInt count){
+
+        PyObject [] arr = new PyObject[(int) count.value];
+
+        for(int i=0;i<arr.length;i++){
+            arr[i] = frame.stack.pop();
+        }
+
+        PyTuple tuple = new PyTuple(arr);
+        frame.stack.push(tuple);
     }
 
     //Works as BUILD_TUPLE, but creates a list.
-    public void OP_BUILD_LIST(PyObject count){
+    public void OP_BUILD_LIST(PyInt count){
+        PyObject [] arr = new PyObject[(int) count.value];
+
+        for(int i=0;i<arr.length;i++){
+            arr[i] = frame.stack.pop();
+        }
+
+        PyList list = new PyList(arr);
+        frame.stack.push(list);
     }
 
     //Works as BUILD_TUPLE, but creates a set.
-    public void OP_BUILD_SET(PyObject count){
+    public void OP_BUILD_SET(PyInt count){
+        PyObject [] arr = new PyObject[(int) count.value];
+
+        for(int i=0;i<arr.length;i++){
+            arr[i] = frame.stack.pop();
+        }
+
+        PySet set = new PySet(arr);
+        frame.stack.push(set);
     }
 
     //New in version 2.7.
 
     //Pushes a new dictionary object onto the stack. The dictionary is pre-sized to hold count entries.
-    public void OP_BUILD_MAP(PyObject count){
+    public void OP_BUILD_MAP(PyInt count){
+        frame.stack.push(new PyDict(count));
     }
 
     //Replaces TOS with getattr(TOS, co_names[namei]).
-    public void OP_LOAD_ATTR(PyObject namei){
+    public void OP_LOAD_ATTR(PyStr name){
+        PyObject tos = frame.stack.pop();
+        PyObject attr = tos.__attr__(name);
     }
 
     //Performs a Boolean operation. The operation name can be found in cmp_op[opname].
-    public void OP_COMPARE_OP(PyObject opname){
+    public void OP_COMPARE_OP(PyInt opname){
+        PyObject op1 = frame.stack.pop();
+        PyObject op2 = frame.stack.pop();
+        frame.stack.push(CompareOperator.op(opname,op1,op2));
+
     }
 
-    //Imports the module co_names[namei]. TOS and TOS1 are popped and provide the fromlist and level arguments of __import__(). The module object is pushed onto the stack. The current namespace is not affected: for a proper import statement, a subsequent STORE_FAST instruction modifies the namespace.
-    public void OP_IMPORT_NAME(PyObject namei){
+    //Imports the module co_names[namei]. TOS and TOS1 are popped and provide the fromlist and level arguments of __import__().
+    //
+    // The module object is pushed onto the stack. The current namespace is not affected:
+    // for a proper import statement, a subsequent STORE_FAST instruction modifies the namespace.
+    public void OP_IMPORT_NAME(PyObject name){
+        PyObject level = frame.stack.pop();
+        PyObject fromlist = frame.stack.pop();
+
+        frame.stack.push(BuiltIn.__import__(name,frame.global_names,frame.local_names,level));
     }
 
-    //Loads the attribute co_names[namei] from the module found in TOS. The resulting object is pushed onto the stack, to be subsequently stored by a STORE_FAST instruction.
-    public void OP_IMPORT_FROM(PyObject namei){
+    //Loads the attribute co_names[namei] from the module found in TOS.
+    // The resulting object is pushed onto the stack, to be subsequently stored by a STORE_FAST instruction.
+    public void OP_IMPORT_FROM(PyStr name){
+        PyObject obj = frame.stack.pop();
+        frame.stack.push(obj.__attr__(name));
     }
 
     //Increments bytecode counter by delta.
@@ -640,35 +828,62 @@ public class VirtualMachine {
     }
 
     //If TOS is true, sets the bytecode counter to target. TOS is popped.
-    public void OP_POP_JUMP_IF_TRUE(PyObject target){
+    public void OP_POP_JUMP_IF_TRUE(PyInt target){
+        PyBool jump = (PyBool) frame.stack.pop();
+        if(jump.value){
+            frame.next_instruction = (int) target.value;
+        }
     }
 
     //If TOS is false, sets the bytecode counter to target. TOS is popped.
-    private void OP_POP_JUMP_IF_FALSE(PyInt count){
+    private void OP_POP_JUMP_IF_FALSE(PyInt target){
         PyBool top = (PyBool) frame.stack.pop();
         if(!top.value){
-            frame.next_instruction = (int) count.value;
+            frame.next_instruction = (int) target.value;
         }
     }
 
     //If TOS is true, sets the bytecode counter to target and leaves TOS on the stack. Otherwise (TOS is false), TOS is popped.
-    public void OP_JUMP_IF_TRUE_OR_POP(PyObject target){
+    public void OP_JUMP_IF_TRUE_OR_POP(PyInt target){
+        PyBool top = (PyBool) frame.stack.peek();
+        if(top.value){
+            frame.next_instruction = (int) target.value;
+        }else{
+            frame.stack.pop();
+        }
     }
 
     //If TOS is false, sets the bytecode counter to target and leaves TOS on the stack. Otherwise (TOS is true), TOS is popped.
-    public void OP_JUMP_IF_FALSE_OR_POP(PyObject target){
+    public void OP_JUMP_IF_FALSE_OR_POP(PyInt target){
+        PyBool top = (PyBool) frame.stack.peek();
+        if(!top.value){
+            frame.next_instruction = (int) target.value;
+        }else{
+            frame.stack.pop();
+        }
     }
 
     //Set bytecode counter to target.
-    public void OP_JUMP_ABSOLUTE(PyObject target){
+    public void OP_JUMP_ABSOLUTE(PyInt target){
+        frame.next_instruction = (int) target.value;
     }
 
-    //TOS is an iterator. Call its next() method. If this yields a new value, push it on the stack (leaving the iterator below it). If the iterator indicates it is exhausted TOS is popped, and the bytecode counter is incremented by delta.
-    public void OP_FOR_ITER(PyObject delta){
+    //TOS is an iterator. Call its next() method. If this yields a new value, push it on the stack (leaving the iterator below it).
+    // If the iterator indicates it is exhausted TOS is popped, and the bytecode counter is incremented by delta.
+    public void OP_FOR_ITER(PyInt delta){
+        PyIterator ite = (PyIterator) frame.stack.peek();
+        PyObject obj = ite.next();
+        if(obj!=null){
+            frame.stack.push(obj);
+        }else{
+            frame.stack.pop();
+            frame.next_instruction += delta.value;
+        }
     }
 
     //Loads the global named co_names[namei] onto the stack.
-    public void OP_LOAD_GLOBAL(PyObject namei){
+    public void OP_LOAD_GLOBAL(PyObject name){
+        frame.stack.push(frame.global_names.get(name));
     }
 
     //Pushes a block for a loop onto the block stack. The block spans from the current instruction with a size of delta bytes.
@@ -685,6 +900,12 @@ public class VirtualMachine {
 
     //Store a key and value pair in a dictionary. Pops the key and value while leaving the dictionary on the stack.
     public void OP_STORE_MAP(){
+
+        PyObject dict = frame.stack.pop();
+        PyObject value = frame.stack.pop();
+        PyObject key = frame.stack.pop();
+        dict.__storesubscr__(key,value);
+        frame.stack.push(dict);
     }
 
     //Pushes a reference to the local co_varnames[var_num] onto the stack.
@@ -700,15 +921,19 @@ public class VirtualMachine {
     }
 
     //Deletes local co_varnames[var_num].
-    public void OP_DELETE_FAST(PyObject var_num){
+    public void OP_DELETE_FAST(PyStr name){
+        frame.local_names.remove(name);
     }
 
-    //Pushes a reference to the cell contained in slot i of the cell and free variable storage. The name of the variable is co_cellvars[i] if i is less than the length of co_cellvars. Otherwise it is co_freevars[i - len(co_cellvars)].
+    //Pushes a reference to the cell contained in slot i of the cell and free variable storage.
+    // The name of the variable is co_cellvars[i] if i is less than the length of co_cellvars. Otherwise it is co_freevars[i - len(co_cellvars)].
     public void OP_LOAD_CLOSURE(PyObject i){
+
     }
 
     //Loads the cell contained in slot i of the cell and free variable storage. Pushes a reference to the object the cell contains on the stack.
     public void OP_LOAD_DEREF(PyObject i){
+
     }
 
     //Stores TOS into the cell contained in slot i of the cell and free variable storage.
@@ -755,7 +980,8 @@ public class VirtualMachine {
     public void OP_CALL_FUNCTION_VAR_KW(PyObject rgc){
     }
 
-    //This is not really an opcode. It identifies the dividing line between opcodes which don’t take arguments < HAVE_ARGUMENT and those which do >= HAVE_ARGUMENT.
+    //This is not really an opcode.
+    // It identifies the dividing line between opcodes which don’t take arguments < HAVE_ARGUMENT and those which do >= HAVE_ARGUMENT.
     public void OP_HAVE_ARGUMENT(){
     }
 
