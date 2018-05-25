@@ -16,6 +16,7 @@ import static com.ff.vm.real.VirtualMachineStatic.*;
 /**
  * Created by chjun1991@163.com on 2018/5/18.
  * https://docs.python.org/2/library/dis.html
+ * https://docs.python.org/2.0/ref/execframes.html
  */
 
 public class VirtualMachine {
