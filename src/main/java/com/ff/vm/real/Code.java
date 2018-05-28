@@ -42,6 +42,8 @@ public class Code extends PyObject{
 
     public PyInt firstlineno;
 
+    public PyObject lnotab;
+
     @Override
     public String type() {
         return "Object Code";

@@ -8,6 +8,9 @@ import com.ff.vm.real.type.constant.BasicConstant;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * refer to http://demoseen.com/blog/2010-02-20_Python_Marshal_Format.html
@@ -17,6 +20,8 @@ public class ByteReader {
     private InputStream in;
 
     private int pos = 0;
+
+    private List<PyStr> internedList = new ArrayList<>(10);
 
     public ByteReader(InputStream in){
         this.in = new InputStream() {
@@ -78,8 +83,8 @@ public class ByteReader {
             case 'x':return readComplex();
             case 'l':return readLong();
             case 's':return readStr();
-            case 't':return readStr();
-            case 'R':return readInt();
+            case 't':;internedList.add(readStr());return internedList.get(internedList.size()-1);
+            case 'R':return internedList.get((int) readInt().value);
             case 'u':return readUtf8Str();
             case '(':return readTuple();
             case '[':return readList();
@@ -107,6 +112,10 @@ public class ByteReader {
         code.co_freevars = (PyTuple) readObject();
         code.co_cellvars = (PyTuple) readObject();
         code.filename = (PyStr) readObject();
+        code.name = (PyStr)readObject();
+        code.firstlineno = readInt();
+        code.lnotab = readObject();
+
 
         return code;
     }
@@ -124,7 +133,7 @@ public class ByteReader {
     }
 
     private PyDict readDict() {
-        return null;
+        throw new UnsupportedOperationException("dict not implement");
     }
 
     private PyList readList() throws IOException {
@@ -133,7 +142,7 @@ public class ByteReader {
         for(int i=0;i<len.value;i++){
             arr[i] = readObject();
         }
-        return new PyList(arr);
+        return new PyList(Arrays.asList(arr));
     }
 
     private PyStr readUtf8Str() throws IOException {

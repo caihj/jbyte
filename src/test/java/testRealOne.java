@@ -43,16 +43,49 @@ public class testRealOne {
 
     }
 
-    @Test
-    public void testByte() throws IOException {
+    private void runFile(String fileName) throws IOException {
         PycReader reader = new PycReader();
         ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource("basic.pyc").getPath());
+        File file = new File(classLoader.getResource(fileName).getPath());
         Code code = reader.readFile(file.getPath());
         System.out.println(DisTools.dis(code));
         System.out.flush();
 
         VirtualMachine vm = new VirtualMachine();
         vm.run_code(code);
+    }
+
+    @Test
+    public void testByte() throws IOException {
+        runFile("basic.pyc");
+    }
+
+    @Test
+    public void testfor() throws IOException {
+        runFile("for_range.pyc");
+    }
+
+    @Test
+    public void testFunction() throws IOException {
+        runFile("function.pyc");
+    }
+
+    @Test
+    public void testloop() throws IOException {
+        runFile("loop.pyc");
+    }
+
+    @Test
+    public void functionReturn() throws IOException {
+        runFile("functionReturn.pyc");
+    }
+    @Test
+    public void hello() throws IOException {
+        runFile("hello.pyc");
+    }
+
+    @Test
+    public void tryCatch() throws IOException {
+        runFile("TryCatch.pyc");
     }
 }

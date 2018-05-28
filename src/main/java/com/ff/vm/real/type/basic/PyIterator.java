@@ -6,21 +6,12 @@ import com.ff.vm.tools.marshal.Constants;
 /**
  * Created by chjun1991@163.com on 2018/5/25.
  */
-public class PyIterator extends PyObject {
-
-    PyObject obj;
-
-    public PyIterator(PyObject obj){
-        //check method
-        this.obj = obj;
-    }
+public abstract class PyIterator extends PyObject {
 
     @Override
-    public String type() {
-        return null;
+    public  String type() {
+        return "iterator";
     }
 
-    public PyObject next(){
-        return null;
-    }
+    public abstract PyObject next();
 }

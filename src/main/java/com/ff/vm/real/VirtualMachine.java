@@ -1,5 +1,6 @@
 package com.ff.vm.real;
 
+import com.ff.vm.real.builtin.Range;
 import com.ff.vm.real.type.PyObject;
 import com.ff.vm.real.type.basic.*;
 import com.ff.vm.real.type.constant.BasicConstant;
@@ -28,7 +29,7 @@ public class VirtualMachine {
     //current frame
     private Frame  frame = null;
 
-    private Object return_value = null;
+    private PyObject return_value = null;
 
     private static Map<String,Method> opMethodMap = new HashMap<>();
 
@@ -48,6 +49,10 @@ public class VirtualMachine {
         builtInConstants.put(new PyStr("NotImplemented"), BasicConstant.TYPE_NOT_IMPLEMENT);
         builtInConstants.put(new PyStr("Ellipsis"), BasicConstant.TYPE_ELLIPSIS);
         builtInConstants.put(new PyStr("__debug__"), BasicConstant.TYPE_FALSE);
+
+
+        //put builtIn function
+        builtInConstants.put(new PyStr("range"),new Range());
     }
 
     static {
@@ -70,7 +75,7 @@ public class VirtualMachine {
         run_frame(frame);
     }
 
-    private Object run_frame(Frame frame){
+    public PyObject run_frame(Frame frame){
         push_frame(frame);
         while (true){
 
@@ -91,6 +96,10 @@ public class VirtualMachine {
 
     }
 
+    public Frame curFrame(){
+        return frame;
+    }
+
     private void push_frame(Frame frame){
         frameStack.push(frame);
         this.frame = frame;
@@ -105,7 +114,7 @@ public class VirtualMachine {
 
         Frame f = frame;
 
-        int b = f.code.co_code.value[f.next_instruction++];
+        int b = 0xff & f.code.co_code.value[f.next_instruction++];
 
         PyObject argObj = null;
 
@@ -240,9 +249,9 @@ public class VirtualMachine {
     }
 
     private void OP_GET_ITER(){
-        Object obj = frame.stack.pop();
-        throw new RuntimeException("not implement");
-        //frame.stack.push();
+        PyObject obj = frame.stack.pop();
+        PyIterator ite = obj.__iter__();
+        frame.stack.push(ite);
     }
 
     private void OP_BINARY_POWER(){
@@ -612,6 +621,7 @@ public class VirtualMachine {
     private void OP_PRINT_ITEM(){
         PyObject obj = frame.stack.pop();
         System.out.print(new String(obj.__str__().value));
+        System.out.print(" ");
     }
 
     //Like PRINT_ITEM, but prints the item second from TOS to the file-like object at TOS. This is used by the extended print statement.
@@ -664,7 +674,7 @@ public class VirtualMachine {
 
     //Returns with TOS to the caller of the function.
     public Object OP_RETURN_VALUE(){
-        Object obj = frame.stack.pop();
+        PyObject obj = frame.stack.pop();
         return_value = obj;
         return Why.RETURN;
     }
@@ -781,10 +791,10 @@ public class VirtualMachine {
 
     //Works as BUILD_TUPLE, but creates a list.
     public void OP_BUILD_LIST(PyInt count){
-        PyObject [] arr = new PyObject[(int) count.value];
+        List<PyObject>  arr = new ArrayList<>((int) count.value);
 
-        for(int i=0;i<arr.length;i++){
-            arr[i] = frame.stack.pop();
+        for(int i=0;i<count.value;i++){
+            arr.add(frame.stack.pop());
         }
 
         PyList list = new PyList(arr);
@@ -820,7 +830,7 @@ public class VirtualMachine {
     public void OP_COMPARE_OP(PyInt opname){
         PyObject op1 = frame.stack.pop();
         PyObject op2 = frame.stack.pop();
-        frame.stack.push(CompareOperator.op(opname,op1,op2));
+        frame.stack.push(CompareOperator.op(opname,op2,op1));
 
     }
 
@@ -845,6 +855,7 @@ public class VirtualMachine {
     //Increments bytecode counter by delta.
     private void OP_JUMP_FORWARD(PyInt count){
         frame.next_instruction +=count.value;
+        System.out.println("OP_JUMP_FORWARD "+ count.value +" next:"+ frame.next_instruction);
     }
 
     //If TOS is true, sets the bytecode counter to target. TOS is popped.
@@ -981,12 +992,37 @@ public class VirtualMachine {
     public void OP_RAISE_VARARGS(PyObject argc){
     }
 
-    //Calls a function. The low byte of argc indicates the number of positional parameters, the high byte the number of keyword parameters. On the stack, the opcode finds the keyword parameters first. For each keyword argument, the value is on top of the key. Below the keyword parameters, the positional parameters are on the stack, with the right-most parameter on top. Below the parameters, the function object to call is on the stack. Pops all function arguments, and the function itself off the stack, and pushes the return value.
-    public void OP_CALL_FUNCTION(PyObject argc){
+    //Calls a function. The low byte of argc indicates the number of positional parameters,
+    // the high byte the number of keyword parameters.
+    // On the stack, the opcode finds the keyword parameters first.
+    // For each keyword argument, the value is on top of the key.
+    // Below the keyword parameters, the positional parameters are on the stack,
+    // with the right-most parameter on top. Below the parameters,
+    // the function object to call is on the stack.
+    // Pops all function arguments,
+    // and the function itself off the stack,
+    // and pushes the return value.
+    public void OP_CALL_FUNCTION(PyInt argc){
+
+        List<PyObject> args = new ArrayList<>();
+        for(int i=0;i<argc.value;i++)
+            args.add(frame.stack.pop());
+
+        Function function = (Function) frame.stack.pop();
+        PyObject ret = function.call(this,args);
+        frame.stack.push(ret);
+
     }
 
-    //Pushes a new function object on the stack. TOS is the code associated with the function. The function object is defined to have argc default parameters, which are found below TOS.
-    public void OP_MAKE_FUNCTION(PyObject argc){
+    //Pushes a new function object on the stack.
+    // TOS is the code associated with the function.
+    // The function object is defined to have argc default parameters,
+    // which are found below TOS.
+    public void OP_MAKE_FUNCTION(PyInt argc){
+        Function function = new PythonFunction();
+        function.code = (Code) frame.stack.pop();
+        function.argc = (int) argc.value;
+        frame.stack.push(function);
     }
 
     //Creates a new function object, sets its func_closure slot, and pushes it on the stack. TOS is the code associated with the function, TOS1 the tuple containing cells for the closure’s free variables. The function also has argc default parameters, which are found below the cells.

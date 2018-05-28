@@ -46,4 +46,14 @@ public class PyInt extends PyObject {
     public PyStr __str__() {
         return new PyStr(value+"");
     }
+
+    @Override
+    public PyBool __lt__(PyObject obj0) {
+
+        if(obj0 instanceof PyInt){
+           return new PyBool(value < ((PyInt)obj0).value);
+        }else {
+           return super.__lt__(obj0);
+        }
+    }
 }

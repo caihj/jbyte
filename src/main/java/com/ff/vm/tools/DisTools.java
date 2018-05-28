@@ -16,12 +16,21 @@ public class DisTools {
     public static String dis(Code code){
 
         StringBuilder sb = new StringBuilder();
+        for(PyObject obj:code.co_names.value){
+            System.out.println("names:"+obj);
+        }
+        for(PyObject obj:code.co_varnames.value){
+            System.out.println("vname:"+obj);
+        }
+        sb.append("#############\n");
+        System.out.println("name:"+code.name);
+        sb.append(code+"\n");
 
         int i = 0;
 
         while(i < code.co_code.value.length){
 
-            int b = code.co_code.value[i];
+            int b = 0xff & (code.co_code.value[i]);
 
             int next;
 
@@ -58,12 +67,19 @@ public class DisTools {
 
             Triplet<String,PyObject,Integer> op = new Triplet(opcodeTostr(b),argObj,b);
 
-            sb.append(i+"\t"+op.getValue0()+"\t"+(op.getValue1()==null ? "" : op.getValue1()) +"\n");
+            if(op.getValue1() instanceof Code){
+                sb.append(dis((Code) op.getValue1()));
+
+                sb.append(i+"\t"+op.getValue0()+"\t"+(op.getValue1()==null ? "" : op.getValue1()) +"\n");
+            }else{
+                sb.append(i+"\t"+op.getValue0()+"\t"+(op.getValue1()==null ? "" : op.getValue1()) +"\n");
+            }
 
             i = next;
 
         }
 
+        sb.append("==========\n");
         return sb.toString();
 
     }

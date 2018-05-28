@@ -1,5 +1,7 @@
 package com.ff.vm.real.type;
 
+import com.ff.vm.real.type.basic.PyBool;
+import com.ff.vm.real.type.basic.PyIterator;
 import com.ff.vm.real.type.basic.PyStr;
 
 /**
@@ -141,14 +143,62 @@ public abstract class PyObject {
 
     }
 
-   
+
     public void __store_attr__(PyStr name, PyObject obj1) {
     }
 
     public void __del_attr__(PyStr name, PyObject obj1) {
     }
 
+    public PyIterator __iter__(){
+        throw new RuntimeException("not supported type "+ this.type());
+    }
+
     public PyObject __attr__(PyStr name) {
         return null;
+    }
+
+    public PyBool __lt__(PyObject obj0){
+        throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public  PyBool __le__(PyObject obj0){
+        throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public  PyBool __eq__(PyObject obj0){
+        throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public  PyBool __ne__(PyObject obj0){
+        throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public  PyBool __gt__(PyObject obj0){
+        throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public  PyBool __ge__(PyObject obj0){
+        throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public  PyBool __in__(PyObject obj0){
+        throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public  PyBool __not_in__(PyObject obj0){
+        throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public  PyBool __is__(PyObject obj0){
+        throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public  PyBool __is_not__(PyObject obj0){
+        throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public  PyBool __isException__(PyObject obj0){
+        throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
     }
 }
