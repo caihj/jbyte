@@ -31,6 +31,8 @@ public class Frame {
 
      PyObject returnValue = null;
 
+     Map<PyStr,Cell> cells = new HashMap<>();
+
     public Frame(Code code,Map<PyStr,PyObject> global_names, Map<PyStr,PyObject> local_names,Frame prev_frame){
         this.code = code;
         this.global_names.putAll(global_names);

@@ -19,6 +19,7 @@ import static com.ff.vm.real.VirtualMachineStatic.*;
  * Created by chjun1991@163.com on 2018/5/18.
  * https://docs.python.org/2/library/dis.html
  * https://docs.python.org/2.0/ref/execframes.html
+ * closure https://www.cnblogs.com/ChrisChen3121/p/3208119.html
  */
 
 public class VirtualMachine {
@@ -29,6 +30,7 @@ public class VirtualMachine {
 
     //current frame
     private Frame  frame = null;
+
 
     private PyObject return_value = null;
 
@@ -978,17 +980,18 @@ public class VirtualMachine {
 
     //Pushes a reference to the cell contained in slot i of the cell and free variable storage.
     // The name of the variable is co_cellvars[i] if i is less than the length of co_cellvars. Otherwise it is co_freevars[i - len(co_cellvars)].
-    public void OP_LOAD_CLOSURE(PyObject i){
-
+    public void OP_LOAD_CLOSURE(PyObject name){
+        frame.stack.push(frame.cells.get(name));
     }
 
     //Loads the cell contained in slot i of the cell and free variable storage. Pushes a reference to the object the cell contains on the stack.
-    public void OP_LOAD_DEREF(PyObject i){
-
+    public void OP_LOAD_DEREF(PyStr name){
+        frame.stack.push(frame.cells.get(name).getContent());
     }
 
     //Stores TOS into the cell contained in slot i of the cell and free variable storage.
-    public void OP_STORE_DEREF(PyObject i){
+    public void OP_STORE_DEREF(PyStr name){
+        frame.cells.get(name).setContent(frame.stack.pop());
     }
 
     //This opcode is obsolete.
@@ -1041,8 +1044,23 @@ public class VirtualMachine {
         frame.stack.push(function);
     }
 
-    //Creates a new function object, sets its func_closure slot, and pushes it on the stack. TOS is the code associated with the function, TOS1 the tuple containing cells for the closure’s free variables. The function also has argc default parameters, which are found below the cells.
-    public void OP_MAKE_CLOSURE(PyObject argc){
+    //Creates a new function object, sets its func_closure slot,
+    // and pushes it on the stack. TOS is the code associated with the function,
+    // TOS1 the tuple containing cells for the closure’s free variables.
+    // The function also has argc default parameters, which are found below the cells.
+    public void OP_MAKE_CLOSURE(PyInt argc){
+
+        Function function = new PythonFunction();
+
+        if(argc.value==0){
+            function.code = (Code) frame.stack.pop();
+            function.cells = (PyTuple) frame.stack.pop();
+        }else{
+            //not implement
+            System.out.println("not implement");
+        }
+
+        frame.stack.push(function);
     }
 
     //Pushes a slice object on the stack. argc must be 2 or 3. If it is 2, slice(TOS1, TOS) is pushed; if it is 3, slice(TOS2, TOS1, TOS) is pushed. See the slice() built-in function for more information.
