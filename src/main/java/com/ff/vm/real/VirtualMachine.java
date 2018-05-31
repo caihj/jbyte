@@ -1,6 +1,7 @@
 package com.ff.vm.real;
 
 import com.ff.vm.real.builtin.Range;
+import com.ff.vm.real.builtin.UserWarning;
 import com.ff.vm.real.type.PyObject;
 import com.ff.vm.real.type.basic.*;
 import com.ff.vm.real.type.constant.BasicConstant;
@@ -53,6 +54,7 @@ public class VirtualMachine {
 
         //put builtIn function
         builtInConstants.put(new PyStr("range"),new Range());
+        builtInConstants.put(new PyStr("UserWarning"),new UserWarning());
     }
 
     static {
@@ -697,12 +699,15 @@ public class VirtualMachine {
     public void OP_EXEC_STMT(){
     }
 
-    //Removes one block from the block stack. Per frame, there is a stack of blocks, denoting nested loops, try statements, and such.
+    //Removes one block from the block stack. Per frame,
+    // there is a stack of blocks, denoting nested loops, try statements, and such.
     public void OP_POP_BLOCK(){
         frame.blocks.pop();
     }
 
-    //Terminates a finally clause. The interpreter recalls whether the exception has to be re-raised, or whether the function returns, and continues with the outer-next block.
+    //Terminates a finally clause.
+    // The interpreter recalls whether the exception has to be re-raised,
+    // or whether the function returns, and continues with the outer-next block.
     public void OP_END_FINALLY(){
 
     }
@@ -720,7 +725,9 @@ public class VirtualMachine {
     }
 
 
-    //Implements name = TOS. namei is the index of name in the attribute co_names of the code object. The compiler tries to use STORE_FAST or STORE_GLOBAL if possible.
+    //Implements name = TOS.
+    // namei is the index of name in the attribute co_names of the code object.
+    // The compiler tries to use STORE_FAST or STORE_GLOBAL if possible.
     private void OP_STORE_NAME(PyStr name){
         PyObject obj = frame.stack.pop();
         frame.local_names.put(name,obj);
@@ -855,7 +862,6 @@ public class VirtualMachine {
     //Increments bytecode counter by delta.
     private void OP_JUMP_FORWARD(PyInt count){
         frame.next_instruction +=count.value;
-        System.out.println("OP_JUMP_FORWARD "+ count.value +" next:"+ frame.next_instruction);
     }
 
     //If TOS is true, sets the bytecode counter to target. TOS is popped.
@@ -868,8 +874,9 @@ public class VirtualMachine {
 
     //If TOS is false, sets the bytecode counter to target. TOS is popped.
     private void OP_POP_JUMP_IF_FALSE(PyInt target){
-        PyBool top = (PyBool) frame.stack.pop();
+        PyBool top = (PyBool) frame.stack.peek();
         if(!top.value){
+            frame.stack.pop();
             frame.next_instruction = (int) target.value;
         }
     }
@@ -920,7 +927,7 @@ public class VirtualMachine {
     //Pushes a block for a loop onto the block stack. The block spans from the current instruction with a size of delta bytes.
     public void OP_SETUP_LOOP(PyInt delta){
         Block block = new Block();
-        block.toAddress = (int) delta.value;
+        block.toAddress = (int) delta.value + frame.next_instruction;
         block.type = Block.Type.LOOP;
         frame.blocks.push(block);
 
@@ -929,7 +936,7 @@ public class VirtualMachine {
     //Pushes a try block from a try-except clause onto the block stack. delta points to the first except block.
     public void OP_SETUP_EXCEPT(PyInt delta){
         Block block = new Block();
-        block.toAddress = (int) delta.value;
+        block.toAddress = (int) delta.value + frame.next_instruction;
         block.type = Block.Type.TRY;
         frame.blocks.push(block);
     }
@@ -937,7 +944,7 @@ public class VirtualMachine {
     //Pushes a try block from a try-except clause onto the block stack. delta points to the finally block.
     public void OP_SETUP_FINALLY(PyInt delta){
         Block block = new Block();
-        block.toAddress = (int) delta.value;
+        block.toAddress = (int) delta.value + frame.next_instruction;
         block.type = Block.Type.TRY;
         frame.blocks.push(block);
     }
@@ -988,8 +995,17 @@ public class VirtualMachine {
     public void OP_SET_LINENO(PyObject lineno){
     }
 
-    //Raises an exception. argc indicates the number of parameters to the raise statement, ranging from 0 to 3. The handler will find the traceback as TOS2, the parameter as TOS1, and the exception as TOS.
+    //Raises an exception. argc
+    // indicates the number of parameters to the raise statement,
+    // ranging from 0 to 3.
+    // The handler will find the traceback as TOS2,
+    // the parameter as TOS1, and the exception as TOS.
     public void OP_RAISE_VARARGS(PyObject argc){
+
+        PyObject obj = frame.stack.peek();
+        frame.stack.push(obj);
+        Block block = frame.blocks.lastElement();
+        frame.next_instruction = block.toAddress;
     }
 
     //Calls a function. The low byte of argc indicates the number of positional parameters,

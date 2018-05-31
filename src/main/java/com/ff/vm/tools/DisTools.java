@@ -37,6 +37,7 @@ public class DisTools {
             Object argObj = null;
 
             if(b>=HAS_ARGUMENT){
+                next = i + 3;
                 int arg = (short) (( 0xff & code.co_code.value[i+1]) + ((0xff & code.co_code.value[i+2])<<8));
                 if(hasconst.contains((int)b)){
                     argObj = code.co_consts.value[arg];
@@ -51,16 +52,15 @@ public class DisTools {
                 }else if(hasname.contains(b)){
                     argObj = code.co_names.value[arg];
                 }else if(hasjrel.contains(b)){
-                    argObj =  arg;
+                    argObj =  arg + " to ("+ (arg + next ) +")";
                 }else if(hasjabs.contains(b)){
-                    argObj = arg;
+                    argObj = arg + " to ("+ (arg ) +")";
                 }else if(haslocal.contains(b)){
                     argObj = code.co_varnames.value[arg];
                 }else{
                     argObj = arg;
                 }
 
-                next = i + 3;
             }else{
                 next = i + 1;
             }
@@ -70,9 +70,9 @@ public class DisTools {
             if(op.getValue1() instanceof Code){
                 sb.append(dis((Code) op.getValue1()));
 
-                sb.append(i+"\t"+op.getValue0()+"\t"+(op.getValue1()==null ? "" : op.getValue1()) +"\n");
+                sb.append(i+"\t"+op.getValue0()+"\t"+(op.getValue1()==null ? "" : w(op.getValue1())) +"\n");
             }else{
-                sb.append(i+"\t"+op.getValue0()+"\t"+(op.getValue1()==null ? "" : op.getValue1()) +"\n");
+                sb.append(i+"\t"+op.getValue0()+"\t"+(op.getValue1()==null ? "" : w(op.getValue1()) ) +"\n");
             }
 
             i = next;
@@ -82,5 +82,13 @@ public class DisTools {
         sb.append("==========\n");
         return sb.toString();
 
+    }
+
+    public static Object w(Object o){
+         if (o instanceof PyStr){
+             return "\""+o.toString()+"\"";
+        }else {
+             return o;
+         }
     }
 }
