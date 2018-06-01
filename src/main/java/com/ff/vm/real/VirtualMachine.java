@@ -1107,14 +1107,29 @@ public class VirtualMachine {
     //Calls a function. argc is interpreted as in CALL_FUNCTION.
     // The top element on the stack contains the variable argument list,
     // followed by keyword and positional arguments.
-    public void OP_CALL_FUNCTION_VAR(PyObject argc){
+    public void OP_CALL_FUNCTION_VAR(PyInt argc){
 
+        List<PyObject> args = new ArrayList<>();
+        for(int i=0;i<argc.value;i++)
+            args.add(frame.stack.pop());
 
-
+        Function function = (Function) frame.stack.pop();
+        PyObject ret = function.call(this,args);
+        frame.stack.push(ret);
     }
 
-    //Calls a function. argc is interpreted as in CALL_FUNCTION. The top element on the stack contains the keyword arguments dictionary, followed by explicit keyword and positional arguments.
-    public void OP_CALL_FUNCTION_KW(PyObject argc){
+    //Calls a function. argc is interpreted as in CALL_FUNCTION.
+    // The top element on the stack contains the keyword arguments dictionary,
+    // followed by explicit keyword and positional arguments.
+    public void OP_CALL_FUNCTION_KW(PyInt argc){
+
+        List<PyObject> args = new ArrayList<>();
+        for(int i=0;i<argc.value;i++)
+            args.add(frame.stack.pop());
+
+        Function function = (Function) frame.stack.pop();
+        PyObject ret = function.call(this,args);
+        frame.stack.push(ret);
     }
 
     //Calls a function. argc is interpreted as in CALL_FUNCTION. The top element on the stack contains the keyword arguments dictionary, followed by the variable-arguments tuple, followed by explicit keyword and positional arguments.
