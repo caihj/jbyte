@@ -42,4 +42,9 @@ public class PyStr extends PyObject {
     public int hashCode() {
         return Arrays.hashCode(value);
     }
+
+    @Override
+    public String toString() {
+        return "'" +(new String(value))+"'";
+    }
 }

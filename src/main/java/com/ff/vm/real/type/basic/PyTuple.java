@@ -11,6 +11,10 @@ public class PyTuple extends PyObject {
 
     public PyObject [] value;
 
+    public PyTuple(){
+        value = new PyObject[0];
+    }
+
     public PyTuple(PyObject[] tuple) {
         this.value = tuple;
     }

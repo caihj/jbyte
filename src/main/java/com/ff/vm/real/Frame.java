@@ -33,12 +33,20 @@ public class Frame {
 
      Map<PyStr,Cell> cells = new HashMap<>();
 
-    public Frame(Code code,Map<PyStr,PyObject> global_names, Map<PyStr,PyObject> local_names,Frame prev_frame){
+     int prefix_op_arg = 0;
+
+    public Frame(Code code,Map<PyStr,PyObject> global_names, Map<PyStr,PyObject> local_names,Frame prev_frame,Map<PyStr,Cell> cells){
         this.code = code;
         this.global_names.putAll(global_names);
         this.local_names.putAll(local_names);
         this.local_names.putAll(global_names);
         this.prev_frame = prev_frame;
+        if(cells!=null)
+            this.cells.putAll(cells);
+    }
+
+    public void print(){
+        System.out.println("next_instruction:"+next_instruction);
     }
 
 

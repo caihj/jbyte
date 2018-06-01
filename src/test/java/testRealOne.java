@@ -53,7 +53,12 @@ public class testRealOne {
         Thread.sleep(100);
 
         VirtualMachine vm = new VirtualMachine();
-        vm.run_code(code);
+        try {
+            vm.run_code(code);
+        } catch (Exception e) {
+            e.printStackTrace();
+            vm.curFrame().print();
+        }
     }
 
     @Test
@@ -88,5 +93,15 @@ public class testRealOne {
     @Test
     public void tryCatch() throws Exception {
         runFile("TryCatch.pyc");
+    }
+
+    @Test
+    public void testCloure() throws IOException, InterruptedException {
+        runFile("clourse.pyc");
+    }
+
+    @Test
+    public void dictTest() throws IOException, InterruptedException {
+        runFile("dictTest.pyc");
     }
 }

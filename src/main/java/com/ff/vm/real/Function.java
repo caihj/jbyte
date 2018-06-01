@@ -14,7 +14,8 @@ public abstract class Function extends PyObject{
 
     public int argc;
 
-    public PyTuple cells;
+    ///for clourse
+    public PyTuple cells = new PyTuple();
 
     @Override
     public String type() {

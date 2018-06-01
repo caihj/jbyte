@@ -17,13 +17,13 @@ public class DisTools {
 
         StringBuilder sb = new StringBuilder();
         for(PyObject obj:code.co_names.value){
-            System.out.println("names:"+obj);
+            sb.append("names:"+obj+"\n");
         }
         for(PyObject obj:code.co_varnames.value){
-            System.out.println("vname:"+obj);
+            sb.append("vname:"+obj+"\n");
         }
         sb.append("#############\n");
-        System.out.println("name:"+code.name);
+        sb.append("name:"+code.name+"\n");
         sb.append(code+"\n");
 
         int i = 0;
@@ -68,7 +68,7 @@ public class DisTools {
             Triplet<String,PyObject,Integer> op = new Triplet(opcodeTostr(b),argObj,b);
 
             if(op.getValue1() instanceof Code){
-                sb.append(dis((Code) op.getValue1()));
+//                sb.append(dis((Code) op.getValue1()));
 
                 sb.append(i+"\t"+op.getValue0()+"\t"+(op.getValue1()==null ? "" : w(op.getValue1())) +"\n");
             }else{
@@ -80,6 +80,14 @@ public class DisTools {
         }
 
         sb.append("==========\n");
+
+        for(Object c:code.co_consts.value){
+            if (c instanceof Code){
+                sb.append(dis((Code) c));
+            }
+        }
+
+
         return sb.toString();
 
     }

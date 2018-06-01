@@ -36,7 +36,7 @@ public class UserWarning extends BuiltInFunction {
                 StringBuilder sb = new StringBuilder();
                 sb.append("(");
                 for(int i=msgObj.size()-1;i>=0;i--){
-                    sb.append(msgObj.get(i).__str__().toString());
+                    sb.append(msgObj.get(i).toString());
                     sb.append(", ");
                 }
                 sb.deleteCharAt(sb.length()-1);

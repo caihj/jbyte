@@ -75,7 +75,7 @@ public class VirtualMachine {
 
     public void run_code(Code code){
 
-        Frame frame = new Frame(code, builtInConstants,Collections.EMPTY_MAP,null);
+        Frame frame = new Frame(code, builtInConstants,Collections.EMPTY_MAP,null,null);
         run_frame(frame);
     }
 
@@ -124,6 +124,8 @@ public class VirtualMachine {
 
         if(b>=HAS_ARGUMENT){
             int arg = (short) (( 0xff & f.code.co_code.value[f.next_instruction]) + ((0xff & f.code.co_code.value[f.next_instruction+1])<<8));
+            arg += (0xffff & f.prefix_op_arg)<<16;
+            f.prefix_op_arg = 0 ;
             if(hasconst.contains((int)b)){
                 argObj = f.code.co_consts.value[arg];
             }else if(hasfree.contains(b)){
@@ -603,7 +605,7 @@ public class VirtualMachine {
         PyObject obj0 = frame.stack.pop();
         PyObject obj1 = frame.stack.pop();
         PyObject obj2 = frame.stack.pop();
-        obj1.__storesubscr__(obj2,obj0);
+        obj1.__storesubscr__(obj0,obj2);
     }
 
     //Implements del TOS1[TOS].
@@ -718,11 +720,16 @@ public class VirtualMachine {
     public void OP_BUILD_CLASS(){
     }
 
-    //This opcode performs several operations before a with block starts. First, it loads __exit__() from the context manager and pushes it onto the stack for later use by WITH_CLEANUP. Then, __enter__() is called, and a finally block pointing to delta is pushed. Finally, the result of calling the enter method is pushed onto the stack. The next opcode will either ignore it (POP_TOP), or store it in (a) variable(s) (STORE_FAST, STORE_NAME, or UNPACK_SEQUENCE).
+    //This opcode performs several operations before a with block starts.
+    // First, it loads __exit__() from the context manager and pushes it onto the stack for later use by WITH_CLEANUP.
+    // Then, __enter__() is called, and a finally block pointing to delta is pushed. Finally,
+    // the result of calling the enter method is pushed onto the stack.
+    // The next opcode will either ignore it (POP_TOP), or store it in (a) variable(s) (STORE_FAST, STORE_NAME, or UNPACK_SEQUENCE).
     public void OP_SETUP_WITH(PyObject delta){
     }
 
-    //Cleans up the stack when a with statement block exits. On top of the stack are 1–3 values indicating how/why the finally clause was entered:
+    //Cleans up the stack when a with statement block exits.
+    // On top of the stack are 1–3 values indicating how/why the finally clause was entered:
     public void OP_WITH_CLEANUP(){
     }
 
@@ -736,16 +743,25 @@ public class VirtualMachine {
     }
 
     //Implements del name, where namei is the index into co_names attribute of the code object.
-    public void OP_DELETE_NAME(PyObject name){
+    public void OP_DELETE_NAME(PyStr name){
+        frame.local_names.remove(name);
 
     }
 
     //Unpacks TOS into count individual values, which are put onto the stack right-to-left.
     public void OP_UNPACK_SEQUENCE(PyObject count){
+        PyObject top = frame.stack.pop();
+
+        throw new RuntimeException("not implement");
+
     }
 
     //Duplicate count items, keeping them in the same order. Due to implementation limits, count should be between 1 and 5 inclusive.
-    public void OP_DUP_TOPX(PyObject count){
+    public void OP_DUP_TOPX(PyInt count){
+        PyObject top = frame.stack.peek();
+        for(int i=0;i<count.value;i++){
+            frame.stack.push(top);
+        }
     }
 
     //Implements TOS.name = TOS1, where namei is the index of name in co_names.
@@ -991,7 +1007,9 @@ public class VirtualMachine {
 
     //Stores TOS into the cell contained in slot i of the cell and free variable storage.
     public void OP_STORE_DEREF(PyStr name){
-        frame.cells.get(name).setContent(frame.stack.pop());
+        Cell c = new Cell();
+        c.setContent(frame.stack.pop());
+        frame.cells.put(name,c);
     }
 
     //This opcode is obsolete.
@@ -1063,16 +1081,36 @@ public class VirtualMachine {
         frame.stack.push(function);
     }
 
-    //Pushes a slice object on the stack. argc must be 2 or 3. If it is 2, slice(TOS1, TOS) is pushed; if it is 3, slice(TOS2, TOS1, TOS) is pushed. See the slice() built-in function for more information.
-    public void OP_BUILD_SLICE(PyObject argc){
+    //Pushes a slice object on the stack. argc must be 2 or 3. If it is 2, slice(TOS1, TOS) is pushed;
+    // if it is 3, slice(TOS2, TOS1, TOS) is pushed.
+    // See the slice() built-in function for more information.
+    public void OP_BUILD_SLICE(PyInt argc){
+        if(argc.value==3){
+            PyObject obj0 = frame.stack.pop();
+            PyObject obj1 = frame.stack.pop();
+            PyObject obj2 = frame.stack.pop();
+            frame.stack.push(new PySlice(obj2,obj1,obj0));
+        }else if(argc.value==2){
+            PyObject obj0 = frame.stack.pop();
+            PyObject obj1 = frame.stack.pop();
+            frame.stack.push(new PySlice(obj1,obj0));
+        }
     }
 
-    //Prefixes any opcode which has an argument too big to fit into the default two bytes. ext holds two additional bytes which, taken together with the subsequent opcode’s argument, comprise a four-byte argument, ext being the two most-significant bytes.
-    public void OP_EXTENDED_ARG(PyObject ext){
+    //Prefixes any opcode which has an argument too big to fit into the default two bytes.
+    // ext holds two additional bytes which, taken together with the subsequent opcode’s argument,
+    // comprise a four-byte argument, ext being the two most-significant bytes.
+    public void OP_EXTENDED_ARG(PyInt ext){
+        frame.prefix_op_arg = (int) ext.value;
     }
 
-    //Calls a function. argc is interpreted as in CALL_FUNCTION. The top element on the stack contains the variable argument list, followed by keyword and positional arguments.
+    //Calls a function. argc is interpreted as in CALL_FUNCTION.
+    // The top element on the stack contains the variable argument list,
+    // followed by keyword and positional arguments.
     public void OP_CALL_FUNCTION_VAR(PyObject argc){
+
+
+
     }
 
     //Calls a function. argc is interpreted as in CALL_FUNCTION. The top element on the stack contains the keyword arguments dictionary, followed by explicit keyword and positional arguments.
