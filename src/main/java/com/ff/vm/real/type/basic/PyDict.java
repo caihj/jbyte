@@ -29,10 +29,15 @@ public class PyDict extends PyObject {
     public PyObject __subscr__(PyObject obj0) {
         PyObject obj = value.get(obj0);
         if(obj==null){
-            return BasicConstant.TYPE_NONE;
+            return null;
         }else{
             return obj;
         }
+    }
+
+    @Override
+    public void __delsubscr__(PyObject obj0) {
+        value.remove(obj0);
     }
 
     @Override
@@ -56,6 +61,11 @@ public class PyDict extends PyObject {
         sb.replace(sb.length()-1,sb.length(),"}");
         return new PyStr(sb.toString().getBytes());
 
+    }
+
+    @Override
+    public PyInt __len__() {
+        return new PyInt(value.size());
     }
 
     @Override

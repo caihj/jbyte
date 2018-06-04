@@ -1,6 +1,7 @@
 package com.ff.vm.real.type;
 
 import com.ff.vm.real.type.basic.PyBool;
+import com.ff.vm.real.type.basic.PyInt;
 import com.ff.vm.real.type.basic.PyIterator;
 import com.ff.vm.real.type.basic.PyStr;
 
@@ -200,5 +201,9 @@ public abstract class PyObject {
 
     public  PyBool __isException__(PyObject obj0){
         throw new RuntimeException("not supported type "+ this.type() + " "+obj0.type());
+    }
+
+    public PyInt __len__(){
+        throw new RuntimeException("not supported type "+ this.type());
     }
 }

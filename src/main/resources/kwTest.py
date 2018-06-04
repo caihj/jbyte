@@ -21,7 +21,7 @@ def test_var_args_call(arg1, arg2, arg3):
     print "arg2:", arg2
     print "arg3:", arg3
 
-args = ("two", 3)
+args = ["two", 3]
 test_var_args_call(1, *args)
 
 

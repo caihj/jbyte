@@ -1,7 +1,10 @@
 package com.ff.vm.real;
 
 import com.ff.vm.real.type.PyObject;
+import com.ff.vm.real.type.basic.PyDict;
 import com.ff.vm.real.type.basic.PyTuple;
+import com.ff.vm.real.type.constant.BasicConstant;
+import com.ff.vm.tools.marshal.Constants;
 
 import java.util.List;
 
@@ -23,4 +26,8 @@ public abstract class Function extends PyObject{
     }
 
     public abstract PyObject call(VirtualMachine vm, List<PyObject> args);
+
+    public  PyObject call(VirtualMachine vm, List<PyObject> args, PyDict kw){
+        return BasicConstant.TYPE_NONE;
+    }
 }
