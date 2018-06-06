@@ -868,6 +868,7 @@ public class VirtualMachine {
     public void OP_LOAD_ATTR(PyStr name){
         PyObject tos = frame.stack.pop();
         PyObject attr = tos.__attr__(name);
+        frame.stack.push(attr);
     }
 
     //Performs a Boolean operation. The operation name can be found in cmp_op[opname].

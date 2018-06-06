@@ -9,12 +9,14 @@ import com.ff.vm.real.type.basic.PyTuple;
 import com.ff.vm.real.type.constant.BasicConstant;
 import com.ff.vm.tools.DisTools;
 import com.ff.vm.tools.PycReader;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Target;
 
 /**
@@ -23,6 +25,24 @@ import java.lang.annotation.Target;
 
 @RunWith(JUnit4.class)
 public class testRealOne {
+
+    @BeforeClass
+    public static  void setUp(){
+        System.out.println("Working Directory = " +
+                System.getProperty("user.dir"));
+        try {
+            String path = testRealOne.class.getResource("compile.bat").getPath();
+            String [] cmd={"cmd","/c",path.substring(1,path.length())};
+            Process p = Runtime.getRuntime().exec(cmd);
+            InputStream i = p.getInputStream();
+            int c;
+            while(( c=i.read())>0){
+                System.out.print((char)c);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Test
     public void testbasic1(){
@@ -57,8 +77,8 @@ public class testRealOne {
         try {
             vm.run_code(code);
         } catch (Exception e) {
-            e.printStackTrace();
             vm.curFrame().print();
+            throw new RuntimeException(e);
         }
     }
 
@@ -118,5 +138,10 @@ public class testRealOne {
     @Test
     public void kwTestTest() throws IOException, InterruptedException {
         runFile("kwTest.pyc");
+    }
+
+    @Test
+    public void classTest() throws IOException, InterruptedException {
+        runFile("class.pyc");
     }
 }
