@@ -15,6 +15,7 @@ import org.junit.runners.JUnit4;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Target;
 
 /**
  * Created by chjun1991@163.com on 2018/5/18.
@@ -62,7 +63,7 @@ public class testRealOne {
     }
 
     @Test
-    public void testByte() throws Exception {
+    public void testBasic() throws Exception {
         runFile("basic.pyc");
     }
 
@@ -103,5 +104,15 @@ public class testRealOne {
     @Test
     public void dictTest() throws IOException, InterruptedException {
         runFile("dictTest.pyc");
+    }
+
+    @Test
+    public void funcVarTest() throws IOException, InterruptedException {
+        runFile("funcVar.pyc");
+    }
+
+    @Test
+    public void funcKwTest() throws IOException, InterruptedException {
+        runFile("funcKw.pyc");
     }
 }

@@ -65,6 +65,29 @@
     <build>
 
         <plugins>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <executable>python</executable>
+                    <workingDirectory>target/classes</workingDirectory>
+                    <arguments>
+                        <argument>-m</argument>
+                        <argument>compileall</argument>
+                        <argument>.</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -83,6 +106,8 @@
                     <addDefaultExcludes>false</addDefaultExcludes>
                 </configuration>
             </plugin>
+
+
         </plugins>
     </build>
 

@@ -2,6 +2,7 @@ package com.ff.vm.real;
 
 import com.ff.vm.real.builtin.Range;
 import com.ff.vm.real.builtin.UserWarning;
+import com.ff.vm.real.builtin.VmException;
 import com.ff.vm.real.type.PyObject;
 import com.ff.vm.real.type.basic.*;
 import com.ff.vm.real.type.constant.BasicConstant;
@@ -57,6 +58,7 @@ public class VirtualMachine {
         //put builtIn function
         builtInConstants.put(new PyStr("range"),new Range());
         builtInConstants.put(new PyStr("UserWarning"),new UserWarning());
+        builtInConstants.put(new PyStr("VmException"),new VmException());
     }
 
     static {
@@ -180,6 +182,13 @@ public class VirtualMachine {
         return null;
 
     }
+
+    private void raiseVmException(String msg){
+        BuiltInFunction func = (BuiltInFunction) builtInConstants.get(new PyStr("VmException"));
+        frame.stack.push(func.call(this,Arrays.asList(new PyStr(msg))));
+        this.OP_RAISE_VARARGS(new PyInt(1));
+    }
+
 
     // see https://docs.python.org/2/library/dis.html#python-bytecode-instructions
     private void OP_STOP_CODE(){
@@ -806,7 +815,7 @@ public class VirtualMachine {
 
         PyObject [] arr = new PyObject[(int) count.value];
 
-        for(int i=0;i<arr.length;i++){
+        for(int i = (int) (count.value-1); i>=0; i--){
             arr[i] = frame.stack.pop();
         }
 
@@ -819,9 +828,12 @@ public class VirtualMachine {
         List<PyObject>  arr = new ArrayList<>((int) count.value);
 
         for(int i=0;i<count.value;i++){
-            arr.add(frame.stack.pop());
+            arr.add(null);
         }
 
+        for(int i = (int) (count.value-1); i>=0; i--){
+            arr.set(i,frame.stack.pop());
+        }
         PyList list = new PyList(arr);
         frame.stack.push(list);
     }
@@ -970,9 +982,9 @@ public class VirtualMachine {
     //Store a key and value pair in a dictionary. Pops the key and value while leaving the dictionary on the stack.
     public void OP_STORE_MAP(){
 
-        PyObject dict = frame.stack.pop();
-        PyObject value = frame.stack.pop();
         PyObject key = frame.stack.pop();
+        PyObject value = frame.stack.pop();
+        PyObject dict = frame.stack.pop();
         dict.__storesubscr__(key,value);
         frame.stack.push(dict);
     }
@@ -1021,12 +1033,16 @@ public class VirtualMachine {
     // ranging from 0 to 3.
     // The handler will find the traceback as TOS2,
     // the parameter as TOS1, and the exception as TOS.
-    public void OP_RAISE_VARARGS(PyObject argc){
+    public void OP_RAISE_VARARGS(PyInt argc){
 
-        PyObject obj = frame.stack.peek();
-        frame.stack.push(obj);
-        Block block = frame.blocks.lastElement();
-        frame.next_instruction = block.toAddress;
+        if(argc.value==1) {
+            PyObject obj = frame.stack.peek();
+            frame.stack.push(obj);
+            Block block = frame.blocks.lastElement();
+            frame.next_instruction = block.toAddress;
+        }else{
+            raiseVmException("not implement");
+        }
     }
 
     //Calls a function. The low byte of argc indicates the number of positional parameters,
@@ -1110,12 +1126,30 @@ public class VirtualMachine {
     public void OP_CALL_FUNCTION_VAR(PyInt argc){
 
         List<PyObject> args = new ArrayList<>();
+
+        PyObject varlist = frame.stack.pop();
+        if(varlist instanceof PyList){
+            List<PyObject> vars = ((PyList) varlist).value;
+            for(int i= vars.size()-1;i>=0; i-- ){
+                args.add(vars.get(i));
+            }
+        }else if(varlist instanceof PyTuple){
+            PyObject [] vars = ((PyTuple) varlist).value;
+            for(int i= vars.length-1;i>=0; i-- ){
+                args.add(vars[i]);
+            }
+        }else {
+        //
+            raiseVmException("bad type");
+        }
+
         for(int i=0;i<argc.value;i++)
             args.add(frame.stack.pop());
 
         Function function = (Function) frame.stack.pop();
         PyObject ret = function.call(this,args);
         frame.stack.push(ret);
+
     }
 
     //Calls a function. argc is interpreted as in CALL_FUNCTION.
@@ -1123,12 +1157,18 @@ public class VirtualMachine {
     // followed by explicit keyword and positional arguments.
     public void OP_CALL_FUNCTION_KW(PyInt argc){
 
+        PyObject kw = frame.stack.pop();
+        if( kw instanceof PyDict){
+        }else{
+            raiseVmException("bad argument"+kw.type());
+        }
+
         List<PyObject> args = new ArrayList<>();
         for(int i=0;i<argc.value;i++)
             args.add(frame.stack.pop());
 
         Function function = (Function) frame.stack.pop();
-        PyObject ret = function.call(this,args);
+        PyObject ret = function.call(this,args, (PyDict) kw);
         frame.stack.push(ret);
     }
 

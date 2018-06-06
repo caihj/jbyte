@@ -16,12 +16,12 @@ public class DisTools {
     public static String dis(Code code){
 
         StringBuilder sb = new StringBuilder();
-        for(PyObject obj:code.co_names.value){
-            sb.append("names:"+obj+"\n");
-        }
-        for(PyObject obj:code.co_varnames.value){
-            sb.append("vname:"+obj+"\n");
-        }
+//        for(PyObject obj:code.co_names.value){
+//            sb.append("names:"+obj+"\n");
+//        }
+//        for(PyObject obj:code.co_varnames.value){
+//            sb.append("vname:"+obj+"\n");
+//        }
         sb.append("#############\n");
         sb.append("name:"+code.name+"\n");
         sb.append(code+"\n");
