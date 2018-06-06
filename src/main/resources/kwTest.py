@@ -34,3 +34,14 @@ kwargs = {"arg3": 3, "arg2": "two"}
 test_var_args_call(1, **kwargs)
 
 test_var_kwargs(4)
+
+def test_var_args_kw(farg,*args,**kw):
+    print "farg",farg
+    print args
+    print kw
+
+test_var_args_kw(1,2,3,5,a=4)
+
+
+test_var_args_call(*(1,2),**{"arg3":3})
+

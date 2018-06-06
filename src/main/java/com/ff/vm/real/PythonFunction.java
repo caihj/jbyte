@@ -2,12 +2,11 @@ package com.ff.vm.real;
 
 import com.ff.vm.real.type.PyObject;
 import com.ff.vm.real.type.basic.PyDict;
+import com.ff.vm.real.type.basic.PyList;
 import com.ff.vm.real.type.basic.PyStr;
 import com.ff.vm.real.type.constant.BasicConstant;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by caihaijun@navercorp.com on 2018/5/28.
@@ -25,28 +24,37 @@ public class PythonFunction extends Function {
     }
 
     private PyObject doCall(VirtualMachine vm,List<PyObject> args, PyDict kw) {
-        int a=0;
         Map<PyStr,PyObject> local = new HashMap<>();
 
-        for(int i=args.size()-1;i>=0 && a<code.co_varnames.value.length;i--){
-            local.put((PyStr) code.co_varnames.value[a++],args.get(i));
+        int argcount = (int) code.argcount.value;
+
+        int argIdx = 0;
+        for(;argIdx<argcount && argIdx< args.size();argIdx++){
+            local.put((PyStr) code.co_varnames.value[argIdx],args.get(argIdx));
+        }
+        args = args.subList(argIdx,args.size());
+
+        for(;argIdx<argcount;argIdx++){
+            PyStr varName = (PyStr) code.co_varnames.value[argIdx];
+            local.put(varName,kw.value.get(varName));
+            kw.value.remove(varName);
         }
 
-        for(;a<code.co_varnames.value.length;a++){
-            PyStr name = (PyStr) code.co_varnames.value[a];
-            PyObject v = kw.__subscr__(name);
-            if(v==null){
-                //argument not send;
-                throw new RuntimeException("bad argument");
-            }
-            local.put(name ,v);
-            kw.__delsubscr__(name);
+        if((code.flags.value & 0x04)!=0){
+            local.put((PyStr) code.co_varnames.value[argIdx++],new PyList(args));
+            args = Collections.emptyList();
         }
 
-        if(kw.__len__().value!=0){
-            throw new RuntimeException("argument not match "+ kw.toString());
+        if((code.flags.value & 0x08)!=0){
+            local.put((PyStr) code.co_varnames.value[argIdx++],kw);
+            kw = new PyDict();
         }
-        a=0;
+        if(args.size()!=0 || kw.value.size()!=0){
+            throw new RuntimeException("argument error");
+        }
+
+
+        int a=0;
         Map<PyStr,Cell> cellMap = new HashMap<>();
 
         for(int i=cells.value.length-1;i>=0;i--){

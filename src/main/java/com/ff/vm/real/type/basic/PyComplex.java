@@ -7,6 +7,11 @@ public class PyComplex extends PyObject {
     public double image;
 
     @Override
+    public Object toJavaObject() {
+        return null;
+    }
+
+    @Override
     public String type() {
         return "complex";
     }

@@ -14,6 +14,11 @@ public class PyBool extends PyObject {
     }
 
     @Override
+    public Object toJavaObject() {
+        return  value;
+    }
+
+    @Override
     public String type() {
         return "bool";
     }

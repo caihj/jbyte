@@ -2,9 +2,12 @@ package com.ff.vm.real.type.basic;
 
 import com.ff.vm.real.type.PyObject;
 import com.ff.vm.real.type.constant.BasicConstant;
+import org.apache.commons.lang.StringUtils;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by chjun1991@163.com on 2018/5/24.
@@ -22,14 +25,30 @@ public class PyDict extends PyObject {
     }
 
     public PyDict(Map<PyStr, PyObject> local_names) {
+        value =  new LinkedHashMap();
         value.putAll(local_names);
+    }
+
+    @Override
+    public PyIterator __iter__() {
+        return new PyIterator(){
+            Iterator<Map.Entry<PyObject, PyObject>> ite = value.entrySet().iterator();
+            @Override
+            public PyObject next() {
+                if(ite.hasNext()){
+                    return ite.next().getKey();
+                }else{
+                    return null;
+                }
+            }
+        };
     }
 
     @Override
     public PyObject __subscr__(PyObject obj0) {
         PyObject obj = value.get(obj0);
         if(obj==null){
-            return null;
+            throw new RuntimeException("key error");
         }else{
             return obj;
         }
@@ -59,7 +78,9 @@ public class PyDict extends PyObject {
         }
 
         sb.replace(sb.length()-1,sb.length(),"}");
-        return new PyStr(sb.toString().getBytes());
+        //return new PyStr(sb.toString().getBytes());
+
+        return new PyStr("{"+ StringUtils.join(value.entrySet().stream().map(k->k.getKey()+": "+k.getValue()).collect(Collectors.toList()), ",")+"}");
 
     }
 

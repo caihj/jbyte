@@ -2,6 +2,7 @@ package com.ff.vm.real.type.basic;
 
 import com.ff.vm.real.type.PyObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 /**
@@ -46,5 +47,26 @@ public class PyStr extends PyObject {
     @Override
     public String toString() {
         return "'" +(new String(value))+"'";
+    }
+
+    @Override
+    public PyObject __mod__(PyObject obj) {
+        PyTuple tuple = (PyTuple) obj;
+        Object []  arr = new Object[tuple.value.length];
+        for(int i=0;i<arr.length;i++){
+            arr[i] = tuple.value[i].toJavaObject();
+        }
+
+        try {
+            return new PyStr(String.format(new String(this.value,"utf-8"),arr).getBytes());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return new PyStr("format error");
+        }
+    }
+
+    @Override
+    public Object toJavaObject() {
+        return new String(value);
     }
 }

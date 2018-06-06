@@ -8,5 +8,13 @@ def test_var_args_call(arg1, arg2, arg3):
 
 
 
-kwargs = {"arg3": 3, "arg2": "two"}
-test_var_args_call(1, **kwargs)
+kwargs = { "arg2": "two","arg1":2}
+test_var_args_call(arg3=1, **kwargs)
+
+
+def test_var_kwargs(farg, **kwargs):
+    print "formal arg:", farg
+    for key in kwargs:
+        print "another keyword arg: %s: %s" % (key, kwargs[key])
+
+test_var_kwargs( myarg2="two", myarg3=3,farg=1)

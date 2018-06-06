@@ -11,6 +11,8 @@ import com.ff.vm.real.type.basic.PyStr;
  */
 public abstract class PyObject {
 
+    public  Object toJavaObject(){ return  this.toString();};
+
     public abstract String type();
 
     public PyStr convertToStr(){ return new PyStr("not implement".getBytes());}

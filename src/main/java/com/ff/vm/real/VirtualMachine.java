@@ -644,9 +644,6 @@ public class VirtualMachine {
         PyObject to = frame.stack.pop();
         PyObject item = frame.stack.pop();
         to.__print__(item);
-        //print item to
-        //not implement
-
     }
 
     private void OP_PRINT_NEWLINE(){
@@ -1057,12 +1054,25 @@ public class VirtualMachine {
     // and pushes the return value.
     public void OP_CALL_FUNCTION(PyInt argc){
 
+        int low = (int) (argc.value & 0xff);
+        int high = (int) ((argc.value & 0xff00)>>8);
+
+        Map<PyStr,PyObject> kwArgs = new HashMap<>();
+
+        for(int i=0;i<high;i++){
+            PyObject value = frame.stack.pop();
+            PyStr key = (PyStr) frame.stack.pop();
+            kwArgs.put(key,value);
+        }
+
         List<PyObject> args = new ArrayList<>();
-        for(int i=0;i<argc.value;i++)
+        for(int i=0;i<low;i++)
             args.add(frame.stack.pop());
 
+        Collections.reverse(args);
+
         Function function = (Function) frame.stack.pop();
-        PyObject ret = function.call(this,args);
+        PyObject ret = function.call(this,args,new PyDict(kwArgs));
         frame.stack.push(ret);
 
     }
@@ -1125,17 +1135,28 @@ public class VirtualMachine {
     // followed by keyword and positional arguments.
     public void OP_CALL_FUNCTION_VAR(PyInt argc){
 
+        int low = (int) (argc.value & 0xff);
+        int high = (int) ((argc.value & 0xff00)>>8);
+
+        Map<PyStr,PyObject> kwArgs = new HashMap<>();
+
+        for(int i=0;i<high;i++){
+            PyObject value = frame.stack.pop();
+            PyStr key = (PyStr) frame.stack.pop();
+            kwArgs.put(key,value);
+        }
+
         List<PyObject> args = new ArrayList<>();
 
         PyObject varlist = frame.stack.pop();
         if(varlist instanceof PyList){
             List<PyObject> vars = ((PyList) varlist).value;
-            for(int i= vars.size()-1;i>=0; i-- ){
+            for(int i= 0;i<vars.size(); i++ ){
                 args.add(vars.get(i));
             }
         }else if(varlist instanceof PyTuple){
             PyObject [] vars = ((PyTuple) varlist).value;
-            for(int i= vars.length-1;i>=0; i-- ){
+            for(int i= 0;i<vars.length; i++ ){
                 args.add(vars[i]);
             }
         }else {
@@ -1143,11 +1164,11 @@ public class VirtualMachine {
             raiseVmException("bad type");
         }
 
-        for(int i=0;i<argc.value;i++)
-            args.add(frame.stack.pop());
+        for(int i=0;i<low;i++)
+            args.add(0,frame.stack.pop());
 
         Function function = (Function) frame.stack.pop();
-        PyObject ret = function.call(this,args);
+        PyObject ret = function.call(this,args,new PyDict(kwArgs));
         frame.stack.push(ret);
 
     }
@@ -1157,23 +1178,78 @@ public class VirtualMachine {
     // followed by explicit keyword and positional arguments.
     public void OP_CALL_FUNCTION_KW(PyInt argc){
 
-        PyObject kw = frame.stack.pop();
+        int low = (int) (argc.value & 0xff);
+        int high = (int) ((argc.value & 0xff00)>>8);
+
+        PyDict kw = (PyDict) frame.stack.pop();
         if( kw instanceof PyDict){
         }else{
             raiseVmException("bad argument"+kw.type());
         }
 
+        for(int i=0;i<high;i++){
+            PyObject value = frame.stack.pop();
+            PyStr key = (PyStr) frame.stack.pop();
+            kw.__storesubscr__(key,value);
+        }
+
+
         List<PyObject> args = new ArrayList<>();
-        for(int i=0;i<argc.value;i++)
+        for(int i=0;i<low;i++)
             args.add(frame.stack.pop());
 
         Function function = (Function) frame.stack.pop();
-        PyObject ret = function.call(this,args, (PyDict) kw);
+        Collections.reverse(args);
+        PyObject ret = function.call(this,args,  kw);
         frame.stack.push(ret);
     }
 
-    //Calls a function. argc is interpreted as in CALL_FUNCTION. The top element on the stack contains the keyword arguments dictionary, followed by the variable-arguments tuple, followed by explicit keyword and positional arguments.
-    public void OP_CALL_FUNCTION_VAR_KW(PyObject rgc){
+    //Calls a function. argc is interpreted as in CALL_FUNCTION.
+    // The top element on the stack contains the keyword arguments dictionary,
+    // followed by the variable-arguments tuple, followed by explicit keyword and positional arguments.
+    public void OP_CALL_FUNCTION_VAR_KW(PyInt argc){
+
+        int low = (int) (argc.value & 0xff);
+        int high = (int) ((argc.value & 0xff00)>>8);
+
+        PyDict kw = (PyDict) frame.stack.pop();
+        if( kw instanceof PyDict){
+        }else{
+            raiseVmException("bad argument"+kw.type());
+        }
+
+        for(int i=0;i<high;i++){
+            PyObject value = frame.stack.pop();
+            PyStr key = (PyStr) frame.stack.pop();
+            kw.value.put(key,value);
+        }
+
+        List<PyObject> args = new ArrayList<>();
+
+        PyObject varlist = frame.stack.pop();
+        if(varlist instanceof PyList){
+            List<PyObject> vars = ((PyList) varlist).value;
+            for(int i=0;i<vars.size(); i++){
+                args.add(vars.get(i));
+            }
+        }else if(varlist instanceof PyTuple){
+            PyObject [] vars = ((PyTuple) varlist).value;
+            for(int i= 0;i<vars.length; i++ ){
+                args.add(vars[i]);
+            }
+        }else {
+            //
+            raiseVmException("bad type");
+        }
+
+        for(int i=0;i<low;i++)
+            args.add(frame.stack.pop());
+
+        Function function = (Function) frame.stack.pop();
+        PyObject ret = function.call(this,args,kw);
+        frame.stack.push(ret);
+
+
     }
 
     //This is not really an opcode.

@@ -115,4 +115,8 @@ public class testRealOne {
     public void funcKwTest() throws IOException, InterruptedException {
         runFile("funcKw.pyc");
     }
+    @Test
+    public void kwTestTest() throws IOException, InterruptedException {
+        runFile("kwTest.pyc");
+    }
 }
