@@ -176,8 +176,10 @@ public class VirtualMachine {
                  return m.invoke(this);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+            System.exit(-1);
         } catch (InvocationTargetException e) {
             e.printStackTrace();
+            System.exit(-1);
         }
         return null;
 
@@ -722,8 +724,20 @@ public class VirtualMachine {
 
     }
 
-    //Creates a new class object. TOS is the methods dictionary, TOS1 the tuple of the names of the base classes, and TOS2 the class name.
+    //Creates a new class object.
+    // TOS is the methods dictionary,
+    // TOS1 the tuple of the names of the base classes,
+    // and TOS2 the class name.
     public void OP_BUILD_CLASS(){
+
+
+        PyDict local = (PyDict) frame.stack.pop();
+        PyTuple base = (PyTuple) frame.stack.pop();
+        PyStr name = (PyStr) frame.stack.pop();
+
+        PyClass pyClass = new PyClass(name,base,local);
+
+        frame.stack.push(pyClass);
     }
 
     //This opcode performs several operations before a with block starts.
