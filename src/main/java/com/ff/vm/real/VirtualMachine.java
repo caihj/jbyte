@@ -1,5 +1,6 @@
 package com.ff.vm.real;
 
+import com.ff.vm.real.builtin.Len;
 import com.ff.vm.real.builtin.Range;
 import com.ff.vm.real.builtin.UserWarning;
 import com.ff.vm.real.builtin.VmException;
@@ -59,6 +60,7 @@ public class VirtualMachine {
         builtInConstants.put(new PyStr("range"),new Range());
         builtInConstants.put(new PyStr("UserWarning"),new UserWarning());
         builtInConstants.put(new PyStr("VmException"),new VmException());
+        builtInConstants.put(new PyStr("len"),new Len());
     }
 
     static {
@@ -174,20 +176,14 @@ public class VirtualMachine {
                  return m.invoke(this,arg);
             else
                  return m.invoke(this);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-            System.exit(-1);
+        } catch (Exception e) {
+           throw new RuntimeException(e);
         }
-        return null;
-
     }
 
     private void raiseVmException(String msg){
         BuiltInFunction func = (BuiltInFunction) builtInConstants.get(new PyStr("VmException"));
-        frame.stack.push(func.call(this,Arrays.asList(new PyStr(msg))));
+        frame.stack.push(func.call(this,Arrays.asList(new PyStr(msg)),new PyDict()));
         this.OP_RAISE_VARARGS(new PyInt(1));
     }
 

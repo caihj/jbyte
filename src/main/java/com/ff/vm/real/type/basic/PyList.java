@@ -53,4 +53,9 @@ public class PyList extends PyObject {
     public PyStr __str__() {
         return new PyStr("("+ StringUtils.join(value.stream().map(PyObject::toString).collect(Collectors.toList()), ", ")+")");
     }
+
+    @Override
+    public PyInt __len__() {
+        return new PyInt(value.size());
+    }
 }

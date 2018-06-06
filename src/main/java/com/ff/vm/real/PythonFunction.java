@@ -13,10 +13,6 @@ import java.util.*;
  */
 public class PythonFunction extends Function {
 
-    @Override
-    public PyObject call(VirtualMachine vm,List<PyObject> args) {
-        return doCall(vm,args,null);
-    }
 
     @Override
     public  PyObject call(VirtualMachine vm, List<PyObject> args, PyDict kw){

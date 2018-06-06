@@ -4,13 +4,14 @@ import com.ff.vm.real.BuiltInFunction;
 import com.ff.vm.real.VirtualMachine;
 import com.ff.vm.real.type.PyObject;
 import com.ff.vm.real.type.basic.PyBool;
+import com.ff.vm.real.type.basic.PyDict;
 import com.ff.vm.real.type.basic.PyStr;
 
 import java.util.List;
 
 public class VmException extends BuiltInFunction {
     @Override
-    public PyObject call(VirtualMachine vm, List<PyObject> args) {
+    public PyObject call(VirtualMachine vm, List<PyObject> args, PyDict kw) {
         return new PyObject() {
 
             List<PyObject> msgObj = args;

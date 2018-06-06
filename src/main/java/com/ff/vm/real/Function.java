@@ -25,8 +25,6 @@ public abstract class Function extends PyObject{
         return "function";
     }
 
-    public abstract PyObject call(VirtualMachine vm, List<PyObject> args);
-
     public  PyObject call(VirtualMachine vm, List<PyObject> args, PyDict kw){
         return BasicConstant.TYPE_NONE;
     }
