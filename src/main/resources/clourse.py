@@ -6,8 +6,10 @@ def foo():
     def bar():
         a=4
         print m,n
-        return m+n+a
+        def cc():
+            return a+m+n
+        return cc
     return bar
 
 c=foo()
-print(c())
+print(c()())

@@ -1040,7 +1040,8 @@ public class VirtualMachine {
         frame.stack.push(frame.cells.get(name));
     }
 
-    //Loads the cell contained in slot i of the cell and free variable storage. Pushes a reference to the object the cell contains on the stack.
+    //Loads the cell contained in slot i of the cell and free variable storage.
+    // Pushes a reference to the object the cell contains on the stack.
     public void OP_LOAD_DEREF(PyStr name){
         frame.stack.push(frame.cells.get(name).getContent());
     }

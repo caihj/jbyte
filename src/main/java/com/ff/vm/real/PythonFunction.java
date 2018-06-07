@@ -53,18 +53,10 @@ public class PythonFunction extends Function {
         int a=0;
         Map<PyStr,Cell> cellMap = new HashMap<>();
 
-        for(int i=cells.value.length-1;i>=0;i--){
-
+        for(int i=0;i<cells.value.length;i++){
             PyObject c = cells.value[i];
-            int idx =a++;
             PyObject argObj;
-
-            if(idx<code.co_cellvars.value.length){
-                argObj = code.co_cellvars.value[idx];
-            }else{
-                int var_idx = idx - code.co_cellvars.value.length;
-                argObj = code.co_freevars.value[var_idx];
-            }
+            argObj = code.co_freevars.value[i];
 
             cellMap.put((PyStr) argObj, (Cell) c);
         }

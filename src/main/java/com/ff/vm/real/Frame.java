@@ -48,7 +48,7 @@ public class Frame {
     }
 
     public void print(){
-        System.out.println("next_instruction:"+next_instruction);
+        System.out.println(String.format(" name %s next_instruction:%d",code.name,next_instruction));
     }
 
 
