@@ -70,7 +70,7 @@ public class PythonFunction extends Function {
         }
 
 
-        Frame newFrame = new Frame(code,vm.curFrame().global_names,local,vm.curFrame(),cellMap);
+        Frame newFrame = new Frame(code,vm.curFrame().global_names,local,vm.curFrame().builtIn,vm.curFrame(),cellMap);
         PyObject returnValue = vm.run_frame(newFrame);
         return returnValue;
     }

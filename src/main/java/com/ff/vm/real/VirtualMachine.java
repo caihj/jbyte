@@ -79,7 +79,7 @@ public class VirtualMachine {
 
     public void run_code(Code code){
 
-        Frame frame = new Frame(code, builtInConstants,Collections.EMPTY_MAP,null,null);
+        Frame frame = new Frame(code, Collections.EMPTY_MAP,Collections.EMPTY_MAP,builtInConstants,null,null);
         run_frame(frame);
     }
 
@@ -813,8 +813,27 @@ public class VirtualMachine {
 
     //Pushes the value associated with co_names[namei] onto the stack.
     private void OP_LOAD_NAME(PyStr name){
-        PyObject obj = frame.local_names.get(name);
-        frame.stack.push(obj);
+        PyObject obj = null;
+
+        obj = frame.local_names.get(name);
+        if(obj!=null) {
+            frame.stack.push(obj);
+            return;
+        }
+
+        obj = frame.global_names.get(name);
+        if(obj!=null) {
+            frame.stack.push(obj);
+            return;
+        }
+
+        obj = frame.builtIn.get(name);
+        if(obj!=null){
+            frame.stack.push(obj);
+            return;
+        }
+
+        throw new RuntimeException("do not have name " + name);
     }
 
     //Creates a tuple consuming count items from the stack, and pushes the resulting tuple onto the stack.

@@ -19,6 +19,8 @@ public class Frame {
 
      Map<PyStr,PyObject> local_names = new HashMap<>();
 
+    Map<PyStr,PyObject> builtIn;
+
      Frame prev_frame;
 
      Stack<PyObject> stack = new Stack();
@@ -35,11 +37,11 @@ public class Frame {
 
      int prefix_op_arg = 0;
 
-    public Frame(Code code,Map<PyStr,PyObject> global_names, Map<PyStr,PyObject> local_names,Frame prev_frame,Map<PyStr,Cell> cells){
+    public Frame(Code code,Map<PyStr,PyObject> global_names, Map<PyStr,PyObject> local_names,Map<PyStr,PyObject> builtIn,Frame prev_frame,Map<PyStr,Cell> cells){
         this.code = code;
         this.global_names.putAll(global_names);
         this.local_names.putAll(local_names);
-        this.local_names.putAll(global_names);
+        this.builtIn = builtIn;
         this.prev_frame = prev_frame;
         if(cells!=null)
             this.cells.putAll(cells);
