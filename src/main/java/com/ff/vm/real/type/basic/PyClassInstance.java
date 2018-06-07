@@ -9,8 +9,12 @@ public class PyClassInstance extends PyObject {
 
     private PyClass pyClass;
 
-    private PyDict atttr;
+    private PyDict atttr ;
 
+    public PyClassInstance(PyClass pyClass) {
+        this.pyClass = pyClass;
+        this.atttr = new PyDict();
+    }
 
     @Override
     public String type() {

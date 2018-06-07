@@ -728,7 +728,6 @@ public class VirtualMachine {
     // and TOS2 the class name.
     public void OP_BUILD_CLASS(){
 
-
         PyDict local = (PyDict) frame.stack.pop();
         PyTuple base = (PyTuple) frame.stack.pop();
         PyStr name = (PyStr) frame.stack.pop();

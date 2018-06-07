@@ -25,20 +25,6 @@ public class PyClass extends PythonFunction {
         this.name = name;
         this.base = base;
         this.atttr = atttr;
-        for(Map.Entry<PyObject,PyObject> kv:atttr.value.entrySet()){
-            PyObject v = kv.getValue();
-            if(v instanceof PythonFunction){
-                PythonFunction function = (PythonFunction) v;
-                kv.setValue(new PythonFunction(){
-                    @Override
-                    public PyObject call(VirtualMachine vm, List<PyObject> args, PyDict kw) {
-                        kw.__storesubscr__(new PyStr("self"),this);
-                        return function.call(vm,args,kw);
-                    }
-                });
-            }
-
-        }
     }
 
     @Override
@@ -49,7 +35,7 @@ public class PyClass extends PythonFunction {
     @Override
     public PyObject call(VirtualMachine vm, List<PyObject> args, PyDict kw) {
         PythonFunction init = (PythonFunction) atttr.value.get(new PyStr("__init__"));
-        PyClassInstance classIntance = new PyClassInstance();
+        PyClassInstance classIntance = new PyClassInstance(this);
         args.add(0,classIntance);
         //kw.__storesubscr__(init.code.co_varnames.value[0],classIntance);
         init.call(vm,args,kw);

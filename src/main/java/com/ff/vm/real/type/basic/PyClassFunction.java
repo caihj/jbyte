@@ -11,8 +11,7 @@ import java.util.List;
  */
 public class PyClassFunction extends PythonFunction {
 
-
-    public PythonFunction self;
+    public PyClassInstance self;
 
     @Override
     public PyObject call(VirtualMachine vm, List<PyObject> args, PyDict kw) {
