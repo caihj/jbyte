@@ -78,8 +78,10 @@ public class VirtualMachine {
     }
 
     public void run_code(Code code){
+        Map<PyStr,PyObject> global= new HashMap<>();
+        global.put(new PyStr("__name__"),new PyStr("__main__"));
 
-        Frame frame = new Frame(code, Collections.EMPTY_MAP,Collections.EMPTY_MAP,builtInConstants,null,null);
+        Frame frame = new Frame(code, global,Collections.EMPTY_MAP,builtInConstants,null,null);
         run_frame(frame);
     }
 

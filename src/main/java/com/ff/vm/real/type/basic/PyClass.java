@@ -10,6 +10,8 @@ import java.util.Map;
 
 /**
  * Created by caihaijun@navercorp.com on 2018/6/6.
+ * class init function object
+ * aka construct object.
  */
 public class PyClass extends PythonFunction {
 
@@ -47,16 +49,26 @@ public class PyClass extends PythonFunction {
     @Override
     public PyObject call(VirtualMachine vm, List<PyObject> args, PyDict kw) {
         PythonFunction init = (PythonFunction) atttr.value.get(new PyStr("__init__"));
-        kw.__storesubscr__(new PyStr("self"),this);
+        PyClassInstance classIntance = new PyClassInstance();
+        args.add(0,classIntance);
+        //kw.__storesubscr__(init.code.co_varnames.value[0],classIntance);
         init.call(vm,args,kw);
-        return this;
+
+        for(Map.Entry<PyObject,PyObject> kv:atttr.value.entrySet()){
+            PyObject attr = kv.getValue();
+            if(attr instanceof  PythonFunction){
+                PythonFunction unbindFunction = (PythonFunction) attr;
+                PyClassFunction bindFunction = new PyClassFunction();
+                bindFunction.code = unbindFunction.code;
+                bindFunction.argc = unbindFunction.argc;
+                bindFunction.cells = unbindFunction.cells;
+                bindFunction.self = classIntance;
+
+                classIntance.__store_attr__((PyStr) kv.getKey(),bindFunction);
+            }
+        }
+
+        return classIntance;
     }
 
-    public void __store_attr__(PyStr name, PyObject obj1) {
-        atttr.__storesubscr__(name,obj1);
-    }
-
-    public PyObject __attr__(PyStr name) {
-        return atttr.__subscr__(name);
-    }
 }

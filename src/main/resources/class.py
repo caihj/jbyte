@@ -8,4 +8,5 @@ class foo():
         print self.a
 
 f=foo()
+d=foo()
 f.show()
