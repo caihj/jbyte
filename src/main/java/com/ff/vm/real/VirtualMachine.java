@@ -1,9 +1,6 @@
 package com.ff.vm.real;
 
-import com.ff.vm.real.builtin.Len;
-import com.ff.vm.real.builtin.Range;
-import com.ff.vm.real.builtin.UserWarning;
-import com.ff.vm.real.builtin.VmException;
+import com.ff.vm.real.builtin.*;
 import com.ff.vm.real.type.PyObject;
 import com.ff.vm.real.type.basic.*;
 import com.ff.vm.real.type.constant.BasicConstant;
@@ -58,6 +55,7 @@ public class VirtualMachine {
 
         //put builtIn function
         builtInConstants.put(new PyStr("range"),new Range());
+        builtInConstants.put(new PyStr("Exception"),new BaseException());
         builtInConstants.put(new PyStr("UserWarning"),new UserWarning());
         builtInConstants.put(new PyStr("VmException"),new VmException());
         builtInConstants.put(new PyStr("len"),new Len());
@@ -92,10 +90,7 @@ public class VirtualMachine {
             Triplet<String,PyObject,Integer> op = parse_byte_arg();
             Object why = dispatch(op);
 
-            //block is not implement;
-
-
-            //return;
+              //return;
             if(why!=null)
                 break;
         }
@@ -258,9 +253,9 @@ public class VirtualMachine {
     }
 
     private void OP_UNARY_INVERT(){
-//        Integer obj = (Integer) frame.stack.pop();
-//        Integer obj2 = ~obj;
-//        frame.stack.push(obj2);
+        PyObject obj = frame.stack.pop();
+        PyObject obj2 = obj.__unary_invert__();
+        frame.stack.push(obj2);
     }
 
     private void OP_GET_ITER(){
@@ -270,10 +265,10 @@ public class VirtualMachine {
     }
 
     private void OP_BINARY_POWER(){
-//        Integer obj0 = (Integer) frame.stack.pop();
-//        Integer obj1 = (Integer) frame.stack.pop();
-//        double d = Math.pow(obj1,obj0);
-//        frame.stack.push(d);
+        PyObject obj0 =  frame.stack.pop();
+        PyObject obj1 =  frame.stack.pop();
+        PyObject d = obj1.__pow__(obj0);
+        frame.stack.push(d);
     }
 
     private void OP_BINARY_MULTIPLY(){

@@ -31,10 +31,6 @@ public abstract class PyObject {
 
     public PyObject  __mod__(PyObject obj) { throw new RuntimeException("not supported type "+ this.type() + " "+obj.type());}
 
-    public PyObject  __divmod__(PyObject obj) { throw new RuntimeException("not supported type "+ this.type() + " "+obj.type());}
-
-    public PyObject __SUBSCR__(PyObject obj) { throw new RuntimeException("not supported type "+ this.type() + " "+obj.type());}
-
     public PyStr __str__(){return new PyStr(super.toString());}
 
     @Override
@@ -206,6 +202,13 @@ public abstract class PyObject {
     }
 
     public PyInt __len__(){
+        throw new RuntimeException("not supported type "+ this.type());
+    }
+
+    /*
+    ~TOS.
+     */
+    public PyObject __unary_invert__() {
         throw new RuntimeException("not supported type "+ this.type());
     }
 }

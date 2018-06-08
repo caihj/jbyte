@@ -6,6 +6,7 @@ import com.ff.vm.real.type.PyObject;
 import com.ff.vm.real.type.basic.PyBool;
 import com.ff.vm.real.type.basic.PyDict;
 import com.ff.vm.real.type.basic.PyStr;
+import com.ff.vm.real.util.CommonUtil;
 
 import java.util.List;
 
@@ -28,15 +29,7 @@ public class VmException extends BuiltInFunction {
 
             @Override
             public PyStr __str__() {
-                StringBuilder sb = new StringBuilder();
-                sb.append("(");
-                for (int i = msgObj.size() - 1; i >= 0; i--) {
-                    sb.append(msgObj.get(i).toString());
-                    sb.append(", ");
-                }
-                sb.deleteCharAt(sb.length() - 1);
-                sb.append(")");
-                return new PyStr(sb.toString());
+                return CommonUtil.toPyStr(msgObj);
             }
         };
     }
