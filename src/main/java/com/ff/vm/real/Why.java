@@ -5,5 +5,6 @@ package com.ff.vm.real;
  */
 public enum  Why {
     RETURN,
-    YIELD
+    YIELD,
+    EXCEPTION
 }

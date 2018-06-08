@@ -8,7 +8,6 @@ import com.ff.vm.real.util.BuiltIn;
 import com.ff.vm.real.util.CompareOperator;
 import org.javatuples.Triplet;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -55,9 +54,9 @@ public class VirtualMachine {
 
         //put builtIn function
         builtInConstants.put(new PyStr("range"),new Range());
-        builtInConstants.put(new PyStr("Exception"),new BaseException());
-        builtInConstants.put(new PyStr("UserWarning"),new UserWarning());
-        builtInConstants.put(new PyStr("VmException"),new VmException());
+        builtInConstants.put(new PyStr("Exception"),new BaseException(Collections.EMPTY_LIST));
+        builtInConstants.put(new PyStr("UserWarning"),new UserWarning(Collections.EMPTY_LIST));
+        builtInConstants.put(new PyStr("VmException"),new VmException(Collections.EMPTY_LIST));
         builtInConstants.put(new PyStr("len"),new Len());
     }
 
@@ -91,8 +90,36 @@ public class VirtualMachine {
             Object why = dispatch(op);
 
               //return;
-            if(why!=null)
+            if(why!=null) {
+                Why w = (Why) why;
+                switch (w) {
+                    case RETURN:
+                        break;
+                    case EXCEPTION: {
+                        while (true) {
+                            BaseException e = (BaseException) curFrame().stack.pop();
+                            if(frameStack.size()>0) {
+                                pop_frame();
+                                curFrame().stack.push(e);
+                                Object ret = OP_RAISE_VARARGS(new PyInt(1));
+                                if (ret != null) {
+                                    //cur frame can not produce exception
+                                    continue;
+                                } else {
+                                    break;
+                                }
+                            }else{
+                                //no frame to pop,print exceptoion detail
+                                System.out.println(e.__str__().toString());
+                            }
+                        }
+                    }
+                    break;
+                    default:
+                        break;
+                }
                 break;
+            }
         }
 
         pop_frame();
@@ -974,7 +1001,22 @@ public class VirtualMachine {
 
     //Loads the global named co_names[namei] onto the stack.
     public void OP_LOAD_GLOBAL(PyObject name){
-        frame.stack.push(frame.global_names.get(name));
+
+        PyObject obj;
+
+        obj = frame.global_names.get(name);
+        if(obj!=null) {
+            frame.stack.push(obj);
+            return;
+        }
+
+        obj = frame.builtIn.get(name);
+        if(obj!=null){
+            frame.stack.push(obj);
+            return;
+        }
+
+        throw new RuntimeException("do not have name " + name);
     }
 
     //Pushes a block for a loop onto the block stack. The block spans from the current instruction with a size of delta bytes.
@@ -1057,15 +1099,24 @@ public class VirtualMachine {
     // ranging from 0 to 3.
     // The handler will find the traceback as TOS2,
     // the parameter as TOS1, and the exception as TOS.
-    public void OP_RAISE_VARARGS(PyInt argc){
+    public Object OP_RAISE_VARARGS(PyInt argc){
 
         if(argc.value==1) {
-            PyObject obj = frame.stack.peek();
+            BaseException obj = (BaseException) frame.stack.peek();
+            obj.addMsg(new PyStr(String.format("File in %s ",curFrame().code.filename.toString(),curFrame().code.name.toString())));
             frame.stack.push(obj);
-            Block block = frame.blocks.lastElement();
+            Block block = null;
+            try {
+                block = frame.blocks.pop();
+            } catch (Exception e) {
+                System.out.println("block is empty");
+                return Why.EXCEPTION;
+            }
             frame.next_instruction = block.toAddress;
+            return null;
         }else{
             raiseVmException("not implement");
+            return Why.EXCEPTION;
         }
     }
 

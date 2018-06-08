@@ -77,7 +77,6 @@ public class testRealOne {
         try {
             vm.run_code(code);
         } catch (Exception e) {
-            vm.curFrame().print();
             throw new RuntimeException(e);
         }
     }
@@ -144,4 +143,10 @@ public class testRealOne {
     public void classTest() throws IOException, InterruptedException {
         runFile("class.pyc");
     }
+
+    @Test
+    public void tryCatch2() throws Exception {
+        runFile("TryCatch2.pyc");
+    }
+
 }

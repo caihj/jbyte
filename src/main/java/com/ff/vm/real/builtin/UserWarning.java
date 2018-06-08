@@ -15,28 +15,15 @@ import java.util.stream.Collectors;
 /**
  * Created by caihaijun@navercorp.com on 2018/5/31.
  */
-public class UserWarning extends BuiltInFunction {
+public class UserWarning extends BaseException  {
+
+
+    public UserWarning(List<PyObject> msgObj) {
+        super(msgObj);
+    }
+
     @Override
-    public PyObject call(VirtualMachine vm, List<PyObject> args, PyDict kw) {
-        return new PyObject() {
-
-            List<PyObject> msgObj = args;
-
-
-            @Override
-            public String type() {
-                return "UserWarning";
-            }
-
-            @Override
-            public PyBool __isException__(PyObject obj0) {
-                return new PyBool(true);
-            }
-
-            @Override
-            public PyStr __str__() {
-               return CommonUtil.toPyStr(msgObj);
-            }
-        };
+    public String type() {
+        return "UserWarning";
     }
 }
