@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class CommonUtil {
 
     public static PyStr  toPyStr(List<PyObject> msgObj){
-         String s = "(" +  StringUtils.join(msgObj.stream().map(PyObject::toString).collect(Collectors.toList()),",") +")";
+         String s = "(" +  StringUtils.join(msgObj.stream().map(PyObject::toString).collect(Collectors.toList()),"\n") +")";
          return new PyStr(s);
 
     }

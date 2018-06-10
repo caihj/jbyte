@@ -98,7 +98,7 @@ public class VirtualMachine {
                     case EXCEPTION: {
                         while (true) {
                             BaseException e = (BaseException) curFrame().stack.pop();
-                            if(frameStack.size()>0) {
+                            if(frameStack.size()>1) {
                                 pop_frame();
                                 curFrame().stack.push(e);
                                 Object ret = OP_RAISE_VARARGS(new PyInt(1));
@@ -111,6 +111,8 @@ public class VirtualMachine {
                             }else{
                                 //no frame to pop,print exceptoion detail
                                 System.out.println(e.__str__().toString());
+                                //terminated vm
+                                return BasicConstant.TYPE_NONE;
                             }
                         }
                     }
