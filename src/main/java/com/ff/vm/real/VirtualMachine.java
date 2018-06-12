@@ -6,8 +6,12 @@ import com.ff.vm.real.type.basic.*;
 import com.ff.vm.real.type.constant.BasicConstant;
 import com.ff.vm.real.util.BuiltIn;
 import com.ff.vm.real.util.CompareOperator;
+import com.ff.vm.tools.DisTools;
+import com.ff.vm.tools.PycReader;
+import lombok.extern.slf4j.Slf4j;
 import org.javatuples.Triplet;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -20,8 +24,12 @@ import static com.ff.vm.real.VirtualMachineStatic.*;
  * closure https://www.cnblogs.com/ChrisChen3121/p/3208119.html
  */
 
+@Slf4j
 public class VirtualMachine {
 
+
+    //contain pyc file to load
+    public String libDir;
 
     //frame stack
     private Deque<Frame> frameStack = new ArrayDeque<>();
@@ -37,7 +45,7 @@ public class VirtualMachine {
     private static Method [] fastArray = new Method[256];
 
 
-    private static Map<PyStr,PyObject> builtInConstants = new HashMap<>();
+    public  static Map<PyStr,PyObject> builtInConstants = new HashMap<>();
 
     //wheather interactive mode
     private boolean isInInteractiveMode = false;
@@ -74,7 +82,23 @@ public class VirtualMachine {
         }
     }
 
+    public VirtualMachine(String libDir) {
+        this.libDir = libDir;
+    }
+
+    public void runFile(String fileName){
+        PycReader reader = new PycReader();
+        try {
+            Code code =  reader.readFile(libDir+"/"+fileName);
+            run_code(code);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+    }
+
     public void run_code(Code code){
+        log.info(DisTools.dis(code));
         Map<PyStr,PyObject> global= new HashMap<>();
         global.put(new PyStr("__name__"),new PyStr("__main__"));
 
@@ -82,8 +106,23 @@ public class VirtualMachine {
         run_frame(frame);
     }
 
+    public Frame import_run_frame(Frame frame){
+        push_frame(frame);
+        __run_frame(frame);
+        Frame ret = pop_frame();
+        return ret;
+    }
+
     public PyObject run_frame(Frame frame){
         push_frame(frame);
+         __run_frame(frame);
+         pop_frame();
+         return return_value;
+    }
+
+    public void __run_frame(Frame frame){
+
+
         while (true){
 
             Triplet<String,PyObject,Integer> op = parse_byte_arg();
@@ -112,7 +151,8 @@ public class VirtualMachine {
                                 //no frame to pop,print exceptoion detail
                                 System.out.println(e.__str__().toString());
                                 //terminated vm
-                                return BasicConstant.TYPE_NONE;
+                                return_value =  BasicConstant.TYPE_NONE;
+                                return;
                             }
                         }
                     }
@@ -123,10 +163,6 @@ public class VirtualMachine {
                 break;
             }
         }
-
-        pop_frame();
-
-        return return_value;
 
     }
 
@@ -139,9 +175,10 @@ public class VirtualMachine {
         this.frame = frame;
     }
 
-    private void pop_frame(){
-        frameStack.pollFirst();//equal pop ,but not throw exception.
+    private Frame pop_frame(){
+        Frame ret = frameStack.pollFirst();//equal pop ,but not throw exception.
         frame = frameStack.peekLast();
+        return ret;
     }
 
     private Triplet<String,PyObject,Integer> parse_byte_arg(){
@@ -927,11 +964,11 @@ public class VirtualMachine {
     //
     // The module object is pushed onto the stack. The current namespace is not affected:
     // for a proper import statement, a subsequent STORE_FAST instruction modifies the namespace.
-    public void OP_IMPORT_NAME(PyObject name){
+    public void OP_IMPORT_NAME(PyStr name){
         PyObject level = frame.stack.pop();
         PyObject fromlist = frame.stack.pop();
 
-        frame.stack.push(BuiltIn.__import__(name,frame.global_names,frame.local_names,level));
+        frame.stack.push(BuiltIn.__import__(this,name,frame.global_names,frame.local_names,level,fromlist));
     }
 
     //Loads the attribute co_names[namei] from the module found in TOS.

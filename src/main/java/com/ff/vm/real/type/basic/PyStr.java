@@ -66,6 +66,11 @@ public class PyStr extends PyObject {
     }
 
     @Override
+    public  PyBool __eq__(PyObject obj0){
+      return new PyBool(this.equals(obj0));
+    }
+
+    @Override
     public Object toJavaObject() {
         return new String(value);
     }

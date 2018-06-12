@@ -59,23 +59,16 @@ public class testRealOne {
         code.co_consts = new PyTuple(new PyObject[]{new PyInt(1), BasicConstant.TYPE_NONE});
         code.co_names = new PyTuple(new PyObject[]{new PyStr("x")});
 
-        VirtualMachine vm = new VirtualMachine();
+        VirtualMachine vm = new VirtualMachine( getClass().getClassLoader().getResource("").getPath());
         vm.run_code(code);
 
     }
 
     private void runFile(String fileName) throws IOException, InterruptedException {
-        PycReader reader = new PycReader();
         ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource(fileName).getPath());
-        Code code = reader.readFile(file.getPath());
-        System.out.println(DisTools.dis(code));
-        System.out.flush();
-        Thread.sleep(100);
-
-        VirtualMachine vm = new VirtualMachine();
+        VirtualMachine vm = new VirtualMachine(classLoader.getResource("basic.pyc").getPath().replace("basic.pyc",""));
         try {
-            vm.run_code(code);
+            vm.runFile(fileName);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -149,4 +142,9 @@ public class testRealOne {
         runFile("TryCatch2.pyc");
     }
 
+
+    @Test
+    public void testImport() throws Exception {
+        runFile("import.pyc");
+    }
 }

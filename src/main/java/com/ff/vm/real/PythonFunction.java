@@ -9,7 +9,7 @@ import com.ff.vm.real.type.constant.BasicConstant;
 import java.util.*;
 
 /**
- * Created by caihaijun@navercorp.com on 2018/5/28.
+ * Created by chjun1991@163.com on 2018/5/28.
  */
 public class PythonFunction extends Function {
 

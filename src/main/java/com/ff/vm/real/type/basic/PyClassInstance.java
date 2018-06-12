@@ -3,7 +3,7 @@ package com.ff.vm.real.type.basic;
 import com.ff.vm.real.type.PyObject;
 
 /**
- * Created by caihaijun@navercorp.com on 2018/6/7.
+ * Created by chjun1991@163.com on 2018/6/7.
  */
 public class PyClassInstance extends PyObject {
 

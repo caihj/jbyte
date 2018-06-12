@@ -18,19 +18,24 @@ public class PycReader {
 
         Code code = null;
 
-        FileInputStream inputStream =  new FileInputStream(fileName);
+        try(FileInputStream inputStream =  new FileInputStream(fileName)){
 
-        byte  [] magic = new byte[4];
-        inputStream.read(magic);
-        log.info("magic {}",byteToHex(magic));
-        byte []  timeStamp = new byte[4];
-        inputStream.read(timeStamp);
-        log.info(new Date(fourByteToLong(timeStamp)*1000).toString());
+            byte  [] magic = new byte[4];
+            inputStream.read(magic);
+            log.info("magic {}",byteToHex(magic));
+            byte []  timeStamp = new byte[4];
+            inputStream.read(timeStamp);
+            log.info(new Date(fourByteToLong(timeStamp)*1000).toString());
 
-        ByteReader reader = new ByteReader(inputStream);
-        code = (Code) reader.readObject();
+            ByteReader reader = new ByteReader(inputStream);
+            code = (Code) reader.readObject();
 
-        return code;
+            return code;
+        }catch (IOException e){
+            log.warn(""+e);
+            return null;
+        }
+
     }
 
     public static String byteToHex(byte[] arr){

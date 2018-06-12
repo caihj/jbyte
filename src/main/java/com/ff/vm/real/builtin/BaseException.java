@@ -12,7 +12,7 @@ import com.ff.vm.real.util.CommonUtil;
 import java.util.List;
 
 /**
- * Created by caihaijun@navercorp.com on 2018/6/8.
+ * Created by chjun1991@163.com on 2018/6/8.
  */
 public class BaseException extends BuiltInFunction {
 

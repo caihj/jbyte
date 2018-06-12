@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by caihaijun@navercorp.com on 2018/6/8.
+ * Created by chjun1991@163.com on 2018/6/8.
  */
 public class CommonUtil {
 

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by caihaijun@navercorp.com on 2018/6/6.
+ * Created by chjun1991@163.com on 2018/6/6.
  * class init function object
  * aka construct object.
  */

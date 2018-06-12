@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by caihaijun@navercorp.com on 2018/5/31.
+ * Created by chjun1991@163.com on 2018/5/31.
  */
 public class UserWarning extends BaseException  {
 

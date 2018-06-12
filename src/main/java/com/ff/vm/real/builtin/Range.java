@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by caihaijun@navercorp.com on 2018/5/28.
+ * Created by chjun1991@163.com on 2018/5/28.
  */
 public class Range extends BuiltInFunction {
     @Override
