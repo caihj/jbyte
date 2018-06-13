@@ -244,7 +244,7 @@ public class VirtualMachine {
         }
     }
 
-    private void raiseVmException(String msg){
+    public void raiseVmException(String msg){
         BuiltInFunction func = (BuiltInFunction) builtInConstants.get(new PyStr("VmException"));
         frame.stack.push(func.call(this,Arrays.asList(new PyStr(msg)),new PyDict()));
         this.OP_RAISE_VARARGS(new PyInt(1));
