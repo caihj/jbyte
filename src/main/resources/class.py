@@ -7,7 +7,18 @@ class foo():
     def show(self):
         print self.a
 
+
+class Too(foo):
+    def __init__(self,a):
+        foo.__init__(self,a)
+
 f=foo(2)
 d=foo(3)
 f.show()
 d.show()
+
+q=Too(6)
+q.show()
+
+if q < f:
+    print "sss"

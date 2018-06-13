@@ -1,22 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- encoders are assigned the type
+         ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+    <encoder>
+        <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+</appender>
 
-
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-            <charset>utf8</charset>
-        </encoder>
-    </appender>
-
-    <root level="INFO">
-        <appender-ref ref="CONSOLE" />
+    <root level="debug">
+        <appender-ref ref="STDOUT" />
     </root>
 
 
-    <logger name="com.ff.vm.real.util.BuiltIn">
-        <level value="OFF"/>
-    </logger>
-
+    <!--<logger name="com.ff.vm.real.VirtualMachine">-->
+        <!--<level value="OFF"/>-->
+    <!--</logger>-->
 
 </configuration>

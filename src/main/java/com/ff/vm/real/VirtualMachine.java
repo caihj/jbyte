@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.javatuples.Triplet;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -126,9 +127,17 @@ public class VirtualMachine {
         while (true){
 
             Triplet<String,PyObject,Integer> op = parse_byte_arg();
-            Object why = dispatch(op);
 
-              //return;
+            Object why = null;
+            try {
+                why = dispatch(op);
+            } catch (RuntimeException e) {
+                log.error(e.toString());
+                raiseVmException("VM exception:"+e.getMessage());
+                why = Why.EXCEPTION;
+            }
+
+            //return;
             if(why!=null) {
                 Why w = (Why) why;
                 switch (w) {
@@ -239,14 +248,23 @@ public class VirtualMachine {
                  return m.invoke(this,arg);
             else
                  return m.invoke(this);
-        } catch (Exception e) {
-           throw new RuntimeException(e);
+        } catch (RuntimeException e) {
+           throw new RuntimeException(e.getLocalizedMessage());
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e.getLocalizedMessage());
+        } catch (InvocationTargetException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e.getTargetException().getMessage());
         }
     }
 
     public void raiseVmException(String msg){
         BuiltInFunction func = (BuiltInFunction) builtInConstants.get(new PyStr("VmException"));
-        frame.stack.push(func.call(this,Arrays.asList(new PyStr(msg)),new PyDict()));
+
+        List args = new ArrayList();
+        args.add(new PyStr(msg));
+
+        frame.stack.push(func.call(this,args,new PyDict()));
         this.OP_RAISE_VARARGS(new PyInt(1));
     }
 

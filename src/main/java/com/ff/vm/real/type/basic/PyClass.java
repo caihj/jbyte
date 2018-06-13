@@ -25,6 +25,16 @@ public class PyClass extends PythonFunction {
         this.name = name;
         this.base = base;
         this.atttr = atttr;
+
+        //copy all parent attr to this.
+        PyIterator ite = base.__iter__();
+        while (true){
+            PyClass parent = (PyClass) ite.next();
+            if(parent==null){
+                break;
+            }
+            this.atttr.value.putAll(parent.atttr.value);
+        }
     }
 
     @Override
@@ -34,27 +44,33 @@ public class PyClass extends PythonFunction {
 
     @Override
     public PyObject call(VirtualMachine vm, List<PyObject> args, PyDict kw) {
-        PythonFunction init = (PythonFunction) atttr.value.get(new PyStr("__init__"));
+
         PyClassInstance classIntance = new PyClassInstance(this);
-        args.add(0,classIntance);
-        //kw.__storesubscr__(init.code.co_varnames.value[0],classIntance);
-        init.call(vm,args,kw);
 
-        for(Map.Entry<PyObject,PyObject> kv:atttr.value.entrySet()){
-            PyObject attr = kv.getValue();
-            if(attr instanceof  PythonFunction){
-                PythonFunction unbindFunction = (PythonFunction) attr;
-                PyClassFunction bindFunction = new PyClassFunction();
-                bindFunction.code = unbindFunction.code;
-                bindFunction.argc = unbindFunction.argc;
-                bindFunction.cells = unbindFunction.cells;
-                bindFunction.self = classIntance;
+        PythonFunction init = (PythonFunction) atttr.value.get(new PyStr("__init__"));
+        if(init!=null) {
 
-                classIntance.__store_attr__((PyStr) kv.getKey(),bindFunction);
+            args.add(0, classIntance);
+            //kw.__storesubscr__(init.code.co_varnames.value[0],classIntance);
+            init.call(vm, args, kw);
+
+            for (Map.Entry<PyObject, PyObject> kv : atttr.value.entrySet()) {
+                PyObject attr = kv.getValue();
+                if (attr instanceof PythonFunction) {
+                    PythonFunction unbindFunction = (PythonFunction) attr;
+                    PyClassFunction bindFunction = new PyClassFunction();
+                    bindFunction.code = unbindFunction.code;
+                    bindFunction.argc = unbindFunction.argc;
+                    bindFunction.cells = unbindFunction.cells;
+                    bindFunction.self = classIntance;
+
+                    classIntance.__store_attr__((PyStr) kv.getKey(), bindFunction);
+                }
             }
         }
-
         return classIntance;
     }
+
+
 
 }

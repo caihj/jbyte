@@ -68,5 +68,8 @@ public class test1 {
 
         VirtualMachine vm = new VirtualMachine();
         vm.run_code(c);
+        int cf = 1024 * 1024 * 1024 ;
+        System.out.println(cf);
+
     }
 }
