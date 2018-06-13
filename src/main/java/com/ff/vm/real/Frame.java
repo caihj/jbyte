@@ -13,29 +13,29 @@ import java.util.Stack;
  */
 public class Frame {
 
-     Code code;
+    public Code code;
 
-     Map<PyStr,PyObject> global_names = new HashMap<>();
+    public Map<PyStr,PyObject> global_names = new HashMap<>();
 
-     Map<PyStr,PyObject> local_names = new HashMap<>();
+    public Map<PyStr,PyObject> local_names = new HashMap<>();
 
-    Map<PyStr,PyObject> builtIn;
+    public Map<PyStr,PyObject> builtIn;
 
-     Frame prev_frame;
+    public Frame prev_frame;
 
-     Stack<PyObject> stack = new Stack();
+    public Stack<PyObject> stack = new Stack();
 
-     Stack<Block> blocks = new Stack<>();
+    public Stack<Block> blocks = new Stack<>();
 
-     int next_instruction = 0;
+    public int next_instruction = 0;
 
-     PyObject lastException = null;
+    public PyObject lastException = null;
 
-     PyObject returnValue = null;
+    public PyObject returnValue = null;
 
-     Map<PyStr,Cell> cells = new HashMap<>();
+    public Map<PyStr,Cell> cells = new HashMap<>();
 
-     int prefix_op_arg = 0;
+    public int prefix_op_arg = 0;
 
     public Frame(Code code,Map<PyStr,PyObject> global_names, Map<PyStr,PyObject> local_names,Map<PyStr,PyObject> builtIn,Frame prev_frame,Map<PyStr,Cell> cells){
         this.code = code;

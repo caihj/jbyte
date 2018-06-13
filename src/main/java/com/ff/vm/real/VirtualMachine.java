@@ -965,17 +965,22 @@ public class VirtualMachine {
     // The module object is pushed onto the stack. The current namespace is not affected:
     // for a proper import statement, a subsequent STORE_FAST instruction modifies the namespace.
     public void OP_IMPORT_NAME(PyStr name){
-        PyObject level = frame.stack.pop();
         PyObject fromlist = frame.stack.pop();
+        PyObject  level = frame.stack.pop();
 
-        frame.stack.push(BuiltIn.__import__(this,name,frame.global_names,frame.local_names,level,fromlist));
+        PyModule module = BuiltIn.__import__(this,name,frame.global_names,frame.local_names,level,fromlist);
+
+        frame.stack.push(module);
     }
 
     //Loads the attribute co_names[namei] from the module found in TOS.
     // The resulting object is pushed onto the stack, to be subsequently stored by a STORE_FAST instruction.
     public void OP_IMPORT_FROM(PyStr name){
-        PyObject obj = frame.stack.pop();
-        frame.stack.push(obj.__attr__(name));
+        PyModule module = (PyModule) frame.stack.pop();
+        PyObject aa = module.__attr__(name);
+
+        frame.stack.push(module);
+        frame.stack.push(aa);
     }
 
     //Increments bytecode counter by delta.
