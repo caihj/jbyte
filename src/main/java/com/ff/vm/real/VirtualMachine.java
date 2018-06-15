@@ -104,25 +104,15 @@ public class VirtualMachine {
         global.put(new PyStr("__name__"),new PyStr("__main__"));
 
         Frame frame = new Frame(code, global,Collections.EMPTY_MAP,builtInConstants,null,null);
-        run_frame(frame);
-    }
-
-    public Frame import_run_frame(Frame frame){
         push_frame(frame);
         __run_frame(frame);
-        Frame ret = pop_frame();
-        return ret;
     }
 
-    public PyObject run_frame(Frame frame){
+    public void import_run_frame(Frame frame){
         push_frame(frame);
-         __run_frame(frame);
-         pop_frame();
-         return return_value;
     }
 
     public void __run_frame(Frame frame){
-
 
         while (true){
 
@@ -179,12 +169,12 @@ public class VirtualMachine {
         return frame;
     }
 
-    private void push_frame(Frame frame){
+    public void push_frame(Frame frame){
         frameStack.push(frame);
         this.frame = frame;
     }
 
-    private Frame pop_frame(){
+    public Frame pop_frame(){
         Frame ret = frameStack.pollFirst();//equal pop ,but not throw exception.
         frame = frameStack.peekLast();
         return ret;
@@ -1212,8 +1202,8 @@ public class VirtualMachine {
         Collections.reverse(args);
 
         Function function = (Function) frame.stack.pop();
-        PyObject ret = function.call(this,args,new PyDict(kwArgs));
-        frame.stack.push(ret);
+        function.call(this,args,new PyDict(kwArgs));
+        //frame.stack.push(ret);
 
     }
 

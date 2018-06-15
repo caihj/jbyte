@@ -9,11 +9,11 @@ public class PyClassInstance extends PyObject {
 
     private PyClass pyClass;
 
-    private PyDict atttr ;
+    private PyDict attr ;
 
     public PyClassInstance(PyClass pyClass) {
         this.pyClass = pyClass;
-        this.atttr = new PyDict();
+        this.attr = new PyDict();
     }
 
     @Override
@@ -22,11 +22,11 @@ public class PyClassInstance extends PyObject {
     }
 
     public void __store_attr__(PyStr name, PyObject obj1) {
-        atttr.__storesubscr__(name,obj1);
+        attr.__storesubscr__(name,obj1);
     }
 
     public PyObject __attr__(PyStr name) {
-        return atttr.__subscr__(name);
+        return attr.__subscr__(name);
     }
 
 }

@@ -15,11 +15,11 @@ public class PythonFunction extends Function {
 
 
     @Override
-    public  PyObject call(VirtualMachine vm, List<PyObject> args, PyDict kw){
-        return doCall(vm,args,kw);
+    public  void call(VirtualMachine vm, List<PyObject> args, PyDict kw){
+          doCall(vm,args,kw);
     }
 
-    private PyObject doCall(VirtualMachine vm,List<PyObject> args, PyDict kw) {
+    private void doCall(VirtualMachine vm,List<PyObject> args, PyDict kw) {
         Map<PyStr,PyObject> local = new HashMap<>();
 
         int argcount = (int) code.argcount.value;
@@ -61,10 +61,9 @@ public class PythonFunction extends Function {
             cellMap.put((PyStr) argObj, (Cell) c);
         }
 
-
         Frame newFrame = new Frame(code,vm.curFrame().global_names,local,vm.curFrame().builtIn,vm.curFrame(),cellMap);
-        PyObject returnValue = vm.run_frame(newFrame);
-        return returnValue;
+        vm.push_frame(newFrame);
+
     }
 
 
