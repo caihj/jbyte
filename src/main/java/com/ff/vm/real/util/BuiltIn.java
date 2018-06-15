@@ -2,6 +2,7 @@ package com.ff.vm.real.util;
 
 import com.ff.vm.real.Code;
 import com.ff.vm.real.Frame;
+import com.ff.vm.real.ImportFrame;
 import com.ff.vm.real.VirtualMachine;
 import com.ff.vm.real.type.PyObject;
 import com.ff.vm.real.type.basic.*;
@@ -21,7 +22,7 @@ import java.util.Map;
 @Slf4j
 public class BuiltIn {
 
-    public static PyModule __import__(VirtualMachine vm,PyStr name, Map<PyStr, PyObject> global_names,
+    public static void __import__(VirtualMachine vm,PyStr name, Map<PyStr, PyObject> global_names,
                                       Map<PyStr, PyObject> local_names, PyObject level, PyObject fromlist) {
 
         PycReader reader = new PycReader();
@@ -35,26 +36,8 @@ public class BuiltIn {
         //execute the code
         Map<PyStr,PyObject> global= new HashMap<>();
         global.put(new PyStr("__name__"),name);
-        Frame frame = new Frame(code, global, Collections.EMPTY_MAP,VirtualMachine.builtInConstants,null,null);
-        //Frame newFrame = new Frame(code,vm.curFrame().global_names,local,vm.curFrame().builtIn,vm.curFrame(),cellMap);
-        Frame ret = vm.import_run_frame(frame);
-
-        frame.local_names.putAll(global);
-        log.info("Frame local:"+frame.local_names);
-
-        Map<PyStr,PyObject> imprts = frame.local_names;
-        if(fromlist!= BasicConstant.TYPE_NONE){
-            imprts = new HashMap<>();
-            PyIterator ite = fromlist.__iter__();
-            while (true) {
-                PyObject obj = ite.next();
-                if(obj==null){
-                    break;
-                }
-                imprts.put((PyStr) obj,frame.local_names.get(obj));
-            }
-        }
-
-        return new PyModule(frame.local_names);
+        ImportFrame frame = new ImportFrame(code, global, Collections.EMPTY_MAP,VirtualMachine.builtInConstants,null,null);
+        frame.fromlist = fromlist;
+        vm.push_frame(frame);
     }
 }

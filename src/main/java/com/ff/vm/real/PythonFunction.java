@@ -63,7 +63,6 @@ public class PythonFunction extends Function {
 
         Frame newFrame = new Frame(code,vm.curFrame().global_names,local,vm.curFrame().builtIn,vm.curFrame(),cellMap);
         vm.push_frame(newFrame);
-
     }
 
 

@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class Range extends BuiltInFunction {
     @Override
-    public PyObject call(VirtualMachine vm, List<PyObject> args, PyDict kw) {
+    public PyObject call( List<PyObject> args, PyDict kw) {
         if(args.size()==1){
             return getList(0L,((PyInt)args.get(0)).value,1);
         }else if(args.size()==2 ){

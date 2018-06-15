@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Len  extends BuiltInFunction {
     @Override
-    public PyObject call(VirtualMachine vm, List<PyObject> args, PyDict kw) {
+    public PyObject call(List<PyObject> args, PyDict kw) {
         return args.get(0).__len__();
     }
 }

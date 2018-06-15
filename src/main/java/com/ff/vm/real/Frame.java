@@ -1,7 +1,11 @@
 package com.ff.vm.real;
 
 import com.ff.vm.real.type.PyObject;
+import com.ff.vm.real.type.basic.PyIterator;
+import com.ff.vm.real.type.basic.PyModule;
 import com.ff.vm.real.type.basic.PyStr;
+import com.ff.vm.real.type.constant.BasicConstant;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +15,8 @@ import java.util.Stack;
  * Created by chjun1991@163.com on 2018/5/18.
  * https://docs.python.org/2.0/ref/execframes.html
  */
+
+@Slf4j
 public class Frame {
 
     public Code code;
@@ -37,6 +43,8 @@ public class Frame {
 
     public int prefix_op_arg = 0;
 
+    public PyObject fromlist = null;
+
     public Frame(Code code,Map<PyStr,PyObject> global_names, Map<PyStr,PyObject> local_names,Map<PyStr,PyObject> builtIn,Frame prev_frame,Map<PyStr,Cell> cells){
         this.code = code;
         this.global_names.putAll(global_names);
@@ -51,5 +59,6 @@ public class Frame {
         System.out.println(String.format(" name %s next_instruction:%d",code.name,next_instruction));
     }
 
-
+    public void onFrameEnd() {
+    }
 }

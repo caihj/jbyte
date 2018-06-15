@@ -105,14 +105,14 @@ public class VirtualMachine {
 
         Frame frame = new Frame(code, global,Collections.EMPTY_MAP,builtInConstants,null,null);
         push_frame(frame);
-        __run_frame(frame);
+        __run_frame();
     }
 
     public void import_run_frame(Frame frame){
         push_frame(frame);
     }
 
-    public void __run_frame(Frame frame){
+    public void __run_frame(){
 
         while (true){
 
@@ -132,7 +132,15 @@ public class VirtualMachine {
                 Why w = (Why) why;
                 switch (w) {
                     case RETURN:
-                        break;
+                        frame.onFrameEnd();
+                        return_value = frame.stack.pop();
+                        if (frameStack.size() > 1){
+                            pop_frame();
+                            curFrame().stack.push(return_value);
+                            continue;
+                        }else{
+                            break;
+                        }
                     case EXCEPTION: {
                         while (true) {
                             BaseException e = (BaseException) curFrame().stack.pop();
@@ -254,7 +262,7 @@ public class VirtualMachine {
         List args = new ArrayList();
         args.add(new PyStr(msg));
 
-        frame.stack.push(func.call(this,args,new PyDict()));
+        func.call(this,args,new PyDict());
         this.OP_RAISE_VARARGS(new PyInt(1));
     }
 
@@ -755,8 +763,7 @@ public class VirtualMachine {
 
     //Returns with TOS to the caller of the function.
     public Object OP_RETURN_VALUE(){
-        PyObject obj = frame.stack.pop();
-        return_value = obj;
+
         return Why.RETURN;
     }
 
@@ -976,9 +983,7 @@ public class VirtualMachine {
         PyObject fromlist = frame.stack.pop();
         PyObject  level = frame.stack.pop();
 
-        PyModule module = BuiltIn.__import__(this,name,frame.global_names,frame.local_names,level,fromlist);
-
-        frame.stack.push(module);
+        BuiltIn.__import__(this,name,frame.global_names,frame.local_names,level,fromlist);
     }
 
     //Loads the attribute co_names[namei] from the module found in TOS.
@@ -1161,7 +1166,6 @@ public class VirtualMachine {
             try {
                 block = frame.blocks.pop();
             } catch (Exception e) {
-                System.out.println("block is empty");
                 return Why.EXCEPTION;
             }
             frame.next_instruction = block.toAddress;
@@ -1298,9 +1302,7 @@ public class VirtualMachine {
             args.add(0,frame.stack.pop());
 
         Function function = (Function) frame.stack.pop();
-        PyObject ret = function.call(this,args,new PyDict(kwArgs));
-        frame.stack.push(ret);
-
+        function.call(this,args,new PyDict(kwArgs));
     }
 
     //Calls a function. argc is interpreted as in CALL_FUNCTION.
@@ -1330,8 +1332,7 @@ public class VirtualMachine {
 
         Function function = (Function) frame.stack.pop();
         Collections.reverse(args);
-        PyObject ret = function.call(this,args,  kw);
-        frame.stack.push(ret);
+        function.call(this,args,  kw);
     }
 
     //Calls a function. argc is interpreted as in CALL_FUNCTION.
@@ -1376,10 +1377,7 @@ public class VirtualMachine {
             args.add(frame.stack.pop());
 
         Function function = (Function) frame.stack.pop();
-        PyObject ret = function.call(this,args,kw);
-        frame.stack.push(ret);
-
-
+        function.call(this,args,kw);
     }
 
     //This is not really an opcode.

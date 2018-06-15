@@ -14,8 +14,8 @@ public class PyClassFunction extends PythonFunction {
     public PyClassInstance self;
 
     @Override
-    public PyObject call(VirtualMachine vm, List<PyObject> args, PyDict kw) {
-        args.add(self);
-        return super.call(vm, args, kw);
+    public void  call(VirtualMachine vm,List<PyObject> args, PyDict kw) {
+         args.add(self);
+         super.call(vm,args, kw);
     }
 }

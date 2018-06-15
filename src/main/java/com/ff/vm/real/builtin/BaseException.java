@@ -19,7 +19,7 @@ public class BaseException extends BuiltInFunction {
     List<PyObject> msgObj;
 
     @Override
-    public PyObject call(VirtualMachine vm, List<PyObject> args, PyDict kw) {
+    public PyObject call(List<PyObject> args, PyDict kw) {
 
         return new BaseException(args);
     }

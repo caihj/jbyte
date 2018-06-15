@@ -26,10 +26,13 @@ public abstract class Function extends PyObject{
     }
 
     public  void call(VirtualMachine vm, List<PyObject> args, PyDict kw){
-
+        PyObject ret = call(args,kw);
+        vm.curFrame().stack.push(ret);
     }
 
-    public void saveAndBack(PyObject returnValue){
+    protected  PyObject call( List<PyObject> args, PyDict kw){
+        return BasicConstant.TYPE_NONE;
+    };
 
-    }
+
 }

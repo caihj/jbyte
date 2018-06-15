@@ -43,7 +43,7 @@ public class PyClass extends PythonFunction {
     }
 
     @Override
-    public PyObject call(VirtualMachine vm, List<PyObject> args, PyDict kw) {
+    public void call(VirtualMachine vm,List<PyObject> args, PyDict kw) {
 
         PyClassInstance classIntance = new PyClassInstance(this);
 
@@ -68,7 +68,7 @@ public class PyClass extends PythonFunction {
                 }
             }
         }
-        return classIntance;
+        vm.curFrame().stack.push(classIntance);
     }
 
 
